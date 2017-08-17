@@ -101,37 +101,26 @@ function main(){
 // add Table
 // ---------------------------------------------------------------------//
     function createTable(tableData) {
-        var headingData = ['ID', 'Subject', 'SIL', 'Test State', 'PT TestState'];
+        var headingData = ['ID', 'Subject', 'Milestone', 'SIL', 'Test State', 'PT TestState'];
         //remove preveous table
         $("#OverviewTable").remove();
         //create the new table
+        var tableH = document.createElement('table');
+        tableH.setAttribute("class", "table table-hover");
+        tableH.setAttribute("id", "OverviewTable");
+
         var table = document.createElement('table');
         table.setAttribute("class", "table table-hover");
         table.setAttribute("id", "OverviewTable");
 
-        // Table Hading
-//        var tableHead = document.createElement('thead');
-//        tableHead.setAttribute("class", "table table-hover");
-//        headingData.forEach(function(rowData) {
-//            var row = document.createElement('tr');
-//        
-//            rowData.forEach(function(cellData) {
-//                var cell = document.createElement('td');
-//                cell.appendChild(document.createTextNode(cellData));
-//                row.appendChild(cell);
-//            });
-//            tableHead.appendChild(row);
-//        });
 
 
         // Table Body
         var tableBody = document.createElement('tbody');
         tableBody.setAttribute("class", "table table-hover");
-
-
         tableData.forEach(function(rowData) {
             var row = document.createElement('tr');
-        
+
             rowData.forEach(function(cellData) {
                 var cell = document.createElement('td');
                 cell.appendChild(document.createTextNode(cellData));
@@ -139,9 +128,24 @@ function main(){
             });
             tableBody.appendChild(row);
         });
-//        table.appendChild(tableHead);
+
+        // Table Heading
+        var tableHead = document.createElement('thead');
+        tableHead.setAttribute("class", "table table-hover");
+        var HeadingRow = document.createElement('tr');
+        headingData.forEach(function(data) {
+            console.log(data);
+            var cell = document.createElement('td');
+            cell.appendChild(document.createTextNode(data));
+            HeadingRow.appendChild(cell);
+            tableHead.appendChild(HeadingRow);
+        });
+
+
+        table.appendChild(tableHead);
         table.appendChild(tableBody);
         document.body.appendChild(table);
+
     }
 
 
@@ -260,7 +264,7 @@ function main(){
                 break;
                 case 'TC Completed':
                     //in case only one TC attached and positive
-                    if (sumState == 'noTC') { 
+                    if (sumState == 'noTC') {
                         sumState = 'PosTested';
                     }
                 break;
@@ -321,7 +325,7 @@ function main(){
             break;
             case 'TC Completed':
                 //in case only one TC attached and positive
-                if (oldSumState == '' || oldSumState == 'noRelevantTC') { 
+                if (oldSumState == '' || oldSumState == 'noRelevantTC') {
                     sumState = 'PosTested';
                 }
             break;
@@ -332,7 +336,7 @@ function main(){
                 //if Milestone is MS2 and TC is 'TC not to Verify'
             case ' ':
             default:
-                // if Test Case State for this Release is empty 
+                // if Test Case State for this Release is empty
                 // it is not relevant for this Release
                 // also no other States are considered
                 if (oldSumState == '' || oldSumState == 'noRelevantTC' ){
@@ -355,7 +359,7 @@ function main(){
         var slicedReqMS = ReqMS.substring(0,3);
 
         for (var i = 0; i < ReqTCStatesSum.length; i++) {
-            
+
             switch (slicedReqMS)
                 {
                     case 'MS2':
@@ -522,7 +526,7 @@ function main(){
                     break;
                     case 'TC Completed':
                         //in case only one TC attached and positive
-                        if (sumState == 'notRelevant') { 
+                        if (sumState == 'notRelevant') {
                             sumState = 'PosTested';
                         }
                     break;
@@ -533,7 +537,7 @@ function main(){
                     case 'TC not to Verify':
                         //look in previous PT generations!!!
                     default:
-                        // if Test Case PT State for this Release is empty 
+                        // if Test Case PT State for this Release is empty
                         // it is not relevant for this Release
                         // also no other States are considered
                         if (sumState == '' || sumState == 'notRelevant' ){
@@ -544,7 +548,7 @@ function main(){
                     break;
                     }
                 PTsumStates[PTGens[j]] = sumState;
-                
+
                 if (finish == 'true'){
                     finish = 'false';
                     break; //break inner loop
@@ -670,7 +674,7 @@ function main(){
 // ---------------------------------------------------------------------//
     google.charts.setOnLoadCallback(drawSOWCoverageChart);
     function drawSOWCoverageChart(){
-    
+
         var data = google.visualization.arrayToDataTable([
             ['Type', 'Count'],
             ['Positive Tested and Tested with Restrictions', posSOWTestCoverage],
@@ -696,7 +700,7 @@ function main(){
 // ---------------------------------------------------------------------//
     google.charts.setOnLoadCallback(drawOverviewChart);
     function drawOverviewChart(){
-    
+
         var data = google.visualization.arrayToDataTable([
             ['Type', 'Count', { role: 'style' }],
             ['SOWs', SOWReqCount, 'red'],
@@ -735,7 +739,7 @@ function main(){
 // ---------------------------------------------------------------------//
 //    google.charts.setOnLoadCallback(drawMilestoneChart);
 //    function drawMilestoneChart(){
-//    
+//
 //        var data = google.visualization.arrayToDataTable([
 //            ['Milestone', 'Count', { role: 'style' }],
 //            ['SR2', MS2Count, 'color:#109618'],
@@ -769,7 +773,7 @@ function main(){
 // ---------------------------------------------------------------------//
     google.charts.setOnLoadCallback(drawTestCoverage);
     function drawTestCoverage(){
-    
+
         var data = [
             ['Release', 'no Test Case attached', 'negative tested', 'untested', 'partially tested','tested with restrictions','part tested with restrictions', 'positive tested'],
 //            ['All', AllStatusMask.noTC,AllStatusMask.NegTested,AllStatusMask.UnTested,AllStatusMask.RestTested,AllStatusMask.PartTestWithRest,AllStatusMask.PartTested,AllStatusMask.PosTested],
@@ -850,7 +854,7 @@ function main(){
 // ---------------------------------------------------------------------//
     google.charts.setOnLoadCallback(drawPTCoverage);
     function drawPTCoverage(){
-    
+
 //        var data = google.visualization.arrayToDataTable([
 //            ['Release', 'no Test Case attached', 'negative tested', 'untested', 'partially tested','tested with restrictions','part tested with restrictions', 'positive tested'],
 //            ['SR2', MS2PTStatusMask.noTC,MS2PTStatusMask.NegTested,MS2PTStatusMask.UnTested,MS2PTStatusMask.RestTested,MS2PTStatusMask.PartTestWithRest,MS2PTStatusMask.PartTested,MS2PTStatusMask.PosTested],
