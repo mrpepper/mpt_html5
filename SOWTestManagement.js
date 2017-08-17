@@ -1,5 +1,6 @@
 $(document).ready(function() {
     var availableTestPlatforms = [];
+
 // ---------------------------------------------------------------------//
 // generate List of available Testplatforms from HTML Table
 // ---------------------------------------------------------------------//
@@ -105,13 +106,10 @@ function main(){
         //remove preveous table
         $("#OverviewTable").remove();
         //create the new table
-        var tableH = document.createElement('table');
-        tableH.setAttribute("class", "table table-hover");
-        tableH.setAttribute("id", "OverviewTable");
-
         var table = document.createElement('table');
         table.setAttribute("class", "table table-hover");
         table.setAttribute("id", "OverviewTable");
+        table.setAttribute("hidden", "true");
 
 
 
