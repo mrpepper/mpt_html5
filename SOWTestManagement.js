@@ -110,11 +110,20 @@ function main(){
         table.setAttribute("id", "OverviewTable");
         table.setAttribute("hidden", "true");
 
-
+        // Table Heading
+        var tableHead = document.createElement('thead');
+        tableHead.setAttribute("class", "thead-default");
+        var HeadingRow = document.createElement('tr');
+        headingData.forEach(function(data) {
+            var cell = document.createElement('td');
+            cell.appendChild(document.createTextNode(data));
+            HeadingRow.appendChild(cell);
+            tableHead.appendChild(HeadingRow);
+        });
 
         // Table Body
         var tableBody = document.createElement('tbody');
-        tableBody.setAttribute("class", "table table-hover");
+        tableBody.setAttribute("class", "table table-striped");
         tableData.forEach(function(rowData) {
             var row = document.createElement('tr');
 
@@ -125,19 +134,6 @@ function main(){
             });
             tableBody.appendChild(row);
         });
-
-        // Table Heading
-        var tableHead = document.createElement('thead');
-        tableHead.setAttribute("class", "table table-hover");
-        var HeadingRow = document.createElement('tr');
-        headingData.forEach(function(data) {
-            console.log(data);
-            var cell = document.createElement('td');
-            cell.appendChild(document.createTextNode(data));
-            HeadingRow.appendChild(cell);
-            tableHead.appendChild(HeadingRow);
-        });
-
 
         table.appendChild(tableHead);
         table.appendChild(tableBody);
