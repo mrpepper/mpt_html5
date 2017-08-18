@@ -72,7 +72,6 @@ function main(){
     var activeReqPTTestState = '';
     var ReqMilestone = '';
     var PFTCCount = 0;
-    var TCCount = 0;
     var activePFTC = 'false';
     var activeReq = 'false';
     var SOW_id = 0;
@@ -142,7 +141,8 @@ function main(){
 
         table.appendChild(tableHead);
         table.appendChild(tableBody);
-        document.body.appendChild(table);
+        //document.body.appendChild(table);
+        document.getElementById("TableContainer").appendChild(table);
 
     }
 
@@ -150,9 +150,6 @@ function main(){
 // ---------------------------------------------------------------------//
 // Count general Values over the whole HTML Data
 // ---------------------------------------------------------------------//
-    var TCCount = $('#roottable > tbody > tr > td.border.Type').filter(function() {
-        return $(this).text() == 'Test Case';
-    }).length;
 
 
 // ---------------------------------------------------------------------//
@@ -703,7 +700,6 @@ function main(){
             ['Type', 'Count', { role: 'style' }],
             ['SOWs', SOWReqCount, 'red'],
             ['linked TCs', PFTCCount,'green'],
-//            ['TCs', TCCount,'green'],
         ]);
 
         var view = new google.visualization.DataView(data);
