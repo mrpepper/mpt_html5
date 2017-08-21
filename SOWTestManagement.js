@@ -96,12 +96,12 @@ function main(){
     var OverviewTable = [];
     var SOWSubject = '';
     var SOWSIL = '';
+    var DepartmentOverview = {};
 
 // ---------------------------------------------------------------------//
 // add Table
 // ---------------------------------------------------------------------//
     function createTable(tableData) {
-        var headingData = ['ID', 'Subject', 'Milestone', 'SIL', 'Test State', 'PT TestState'];
         //remove preveous table
         $("#OverviewTable").remove();
         //create the new table
@@ -549,6 +549,30 @@ function main(){
         return PTsumStates;
     }
 
+// ---------------------------------------------------------------------//
+//Generate DEpartment Overview
+// ---------------------------------------------------------------------//
+    function generateDepartmentOverview(TestPF){
+          retCode = 'false';
+          if(TestPF !== '' && TestPF !== null && TestPF !== '\xa0'){ //\xa0 == &nbsp;
+              //Split PFString if there is more than one TestPlatform: separated by: ,
+              var splitPFString = TestPF.split(',');
+              for (var i = 0; i < splitPFString.length; i++) {
+                  var cutPFString = splitPFString[i].split('-');
+                  DepartmentString = cutPFString[0].trim();
+
+                  if (DepartmentString in DepartmentOverview)
+                  {
+                      DepartmentOverview[DepartmentString]++;
+                  }
+                  else
+                  {
+                      DepartmentOverview[DepartmentString] = 1;
+                  }
+              }
+          }
+          return retCode;
+    }
 
 // ---------------------------------------------------------------------//
 // Main Routine: parse HTML trou tbody > tr
@@ -585,7 +609,9 @@ function main(){
                     var combinedPTTestStates = combinePTTestStates(activeReqTestState, PTSumState);
                     CountPTPlanningState(ReqMilestone,combinedPTTestStates);
 
-                    OverviewTable.push([SOW_id,SOWSubject, ReqMilestone, SOWSIL, activeReqTestState, activeReqPTTestState]);
+                    generateDepartmentOverview(SOWAffectedTestPlatforms);
+
+                    OverviewTable.push([SOW_id,SOWSubject, ReqMilestone, SOWSIL, activeReqTestState, activeReqPTTestState, SOWAffectedTestPlatforms]);
 
                     //console.log('Sum State:', combinedTestState, '| TC State:', activeReqTestState, '| PT State:',PTSumState );//activeReqPTTestState
                     //console.log('PT State:',PTSumState );
