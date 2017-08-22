@@ -591,7 +591,7 @@ function main(){
 
         switch($(this).attr('class'))
         {
-            case 'scr_header':
+            case 'sow_header':
                 if (activeReq == 'true' && activePFTC == 'false'){
                     CountPlanningState(ReqMilestone,'noTC');
                     CountPTPlanningState(ReqMilestone,'noTC');
@@ -624,7 +624,7 @@ function main(){
                 attachedTCPTStatesSum = [];
             break;
 
-            case 'scr':
+            case 'sow':
                 var State = this.getElementsByClassName('State')[0].childNodes[0].nodeValue;
                 if(Type == 'SOW Requirement' && validTPF == 'valid' && useSILReq == 'true') {
                     activeReq = 'true';
@@ -644,7 +644,7 @@ function main(){
                 }
             break;
 
-            case 'platform_test_case':
+            case 'test_case':
                 var State = this.getElementsByClassName('State')[0].childNodes[0].nodeValue;
                 var pltfm_tc_id = this.getElementsByClassName('ID')[0].childNodes[0].nodeValue;
                 var attachedTCStates = {PT1State:'',PT2State:'',PVSState:''};
