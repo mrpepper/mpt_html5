@@ -715,38 +715,38 @@ function main(){
 // ---------------------------------------------------------------------//
 //  Item Overview Chart
 // ---------------------------------------------------------------------//
-    google.charts.setOnLoadCallback(drawOverviewChart);
-    function drawOverviewChart(){
-
-        var data = google.visualization.arrayToDataTable([
-            ['Type', 'Count', { role: 'style' }],
-            ['SOWs', SOWReqCount, 'red'],
-            ['linked TCs', PFTCCount,'green'],
-        ]);
-
-        var view = new google.visualization.DataView(data);
-        view.setColumns([0, 1,
-                         { calc: "stringify",
-                           sourceColumn: 1,
-                           type: "string",
-                           role: "annotation" },
-                         2]);
-
-        var options = {
-            title: 'Amount of Items',
-            width: 600,
-            height: 400,
-            legend: { position: 'right', alignment: 'center', maxLines: 3 },
-            chartArea: {left:80, bottom:20},
-            bar: { groupWidth: '50%' },
-            pieSliceText: 'value',
-            colors: ['#3366CC', '#994499']
-        };
-
-
-        var chart = new google.visualization.PieChart(document.getElementById('OverviewChart'));
-        chart.draw(view, options);
-    }
+//    google.charts.setOnLoadCallback(drawOverviewChart);
+//    function drawOverviewChart(){
+//
+//        var data = google.visualization.arrayToDataTable([
+//            ['Type', 'Count', { role: 'style' }],
+//            ['SOWs', SOWReqCount, 'red'],
+//            ['linked TCs', PFTCCount,'green'],
+//        ]);
+//
+//        var view = new google.visualization.DataView(data);
+//        view.setColumns([0, 1,
+//                         { calc: "stringify",
+//                           sourceColumn: 1,
+//                           type: "string",
+//                           role: "annotation" },
+//                         2]);
+//
+//        var options = {
+//            title: 'Amount of Items',
+//            width: 600,
+//            height: 400,
+//            legend: { position: 'right', alignment: 'center', maxLines: 3 },
+//            chartArea: {left:80, bottom:20},
+//            bar: { groupWidth: '50%' },
+//            pieSliceText: 'value',
+//            colors: ['#3366CC', '#994499']
+//        };
+//
+//
+//        var chart = new google.visualization.PieChart(document.getElementById('ItemOverviewChart'));
+//        chart.draw(view, options);
+//    }
 
 // ---------------------------------------------------------------------//
 // Bar Charts
@@ -783,6 +783,44 @@ function main(){
 //        var chart = new google.visualization.ColumnChart(document.getElementById('MilestoneChart'));
 //        chart.draw(view, options);
 //    }
+// ---------------------------------------------------------------------//
+//  Department Overview
+// ---------------------------------------------------------------------//
+    google.charts.setOnLoadCallback(drawDepartmentChart);
+    function drawDepartmentChart(){
+        var data = new google.visualization.DataTable()
+        data.addColumn('string', 'Dep');
+        data.addColumn('number', 'count');
+        var testarray = [];
+//        data.addRows(DepartmentOverview.length)
+        for (var key in DepartmentOverview) {
+            testarray.push([key, DepartmentOverview[key]]);
+//            console.log(testarray)
+            //data.addRow([key, DepartmentOverview[key]]);
+//            console.log(data);
+        }
+        data.addRows(testarray);
+
+
+
+        var view = new google.visualization.DataView(data);
+        //view.setColumns([0, 1,
+        //                 { calc: "stringify",
+        //                   sourceColumn: 1,
+        //                   type: "string",
+        //                   role: "annotation" },
+        //                 2]);
+
+        var options = {
+            title: 'Department Overview',
+            width: 800,
+            height: 400,
+            legend: { position: 'right', maxLines: 3 },
+            bar: { groupWidth: '50%' },
+        };
+        var chart = new google.visualization.ColumnChart(document.getElementById('DepartmentOverview'));
+        chart.draw(view, options);
+    }
 
 // ---------------------------------------------------------------------//
 //  Test Coverage over Milestones Chart
