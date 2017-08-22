@@ -72,7 +72,7 @@ function main(){
     var activeReqPTTestState = '';
     var ReqMilestone = '';
     var PFTCCount = 0;
-    var activePFTC = 'false';
+    var activeTC = 'false';
     var activeReq = 'false';
     var SOW_id = 0;
     var SOWAffectedTestPlatforms = '';
@@ -91,6 +91,7 @@ function main(){
     var MS4Count = 0;
     var noMSplanned = 0;
     var attachedTCPTStatesSum = [];
+    var allTestState = [];
     var selectedTestPlatform = $( "#selected_Test_Platforms" ).val();
     var selectedSILrelevant = $( "#selected_SIL_relevant" ).val();
     var OverviewTable = [];
@@ -551,7 +552,7 @@ function main(){
     }
 
 // ---------------------------------------------------------------------//
-//Generate DEpartment Overview
+//Generate Department Overview
 // ---------------------------------------------------------------------//
     function generateDepartmentOverview(TestPF){
           retCode = 'false';
@@ -576,6 +577,14 @@ function main(){
     }
 
 // ---------------------------------------------------------------------//
+// combined calculation for test states
+// ---------------------------------------------------------------------//
+    function handleTestStates(ReqMS,TestStates){
+
+    }
+
+
+// ---------------------------------------------------------------------//
 // Main Routine: parse HTML trou tbody > tr
 // ---------------------------------------------------------------------//
 
@@ -593,36 +602,46 @@ function main(){
         switch($(this).attr('class'))
         {
             case 'sow_header':
-                if (activeReq == 'true' && activePFTC == 'false'){
+                if (activeReq == 'true' && activeTC == 'false'){
                     CountPlanningState(ReqMilestone,'noTC');
                     CountPTPlanningState(ReqMilestone,'noTC');
 //                    console.log('Sum State: noTC');
 //                    console.log('-------------------------------------------------------------------');
                 }
-                else if (activeReq == 'true' && activePFTC == 'true'){
+                else if (activeReq == 'true' && activeTC == 'true'){
                     //console.log('SOWTPF:', SOWAffectedTestPlatforms,' ProjTC:',ProjTCTestPlatform,' PFTC:',PFTCTestPlatform);
+
+                    //calculate SOW Test Status from TC Test State
                     activeReqTestState = handleActiveReqTestState(activeReqTestStateSum);
                     activeReqPTTestState = handleAttachedTCState(ReqMilestone,attachedTCPTStatesSum);
                     combinedTestState = combineTestStates(activeReqTestState,activeReqPTTestState);
                     CountPlanningState(ReqMilestone,combinedTestState);
+                    // ---------------------------------------------------------------------//
 
+                    //calculate SOW Test Status from PT gen Test States
                     var PTSumState = handleTCPTStates(ReqMilestone, attachedTCPTStatesSum, activeReqPTTestState);
                     var combinedPTTestStates = combinePTTestStates(activeReqTestState, PTSumState);
                     CountPTPlanningState(ReqMilestone,combinedPTTestStates);
+                    // ---------------------------------------------------------------------//
+
+                    //try to combine the calculation for PT Test State and TC Test State in one function
+                    handleTestStates(ReqMilestone,allTestStates);
+                    // ---------------------------------------------------------------------//
 
                     generateDepartmentOverview(SOWAffectedTestPlatforms);
 
                     OverviewTable.push([SOW_id,SOWSubject, ReqMilestone, SOWSIL, activeReqTestState, activeReqPTTestState, SOWAffectedTestPlatforms]);
 
-                    //console.log('Sum State:', combinedTestState, '| TC State:', activeReqTestState, '| PT State:',PTSumState );//activeReqPTTestState
+                    console.log('Sum State:', combinedTestState, '| TC State:', activeReqTestState, '| PT State:',PTSumState );//activeReqPTTestState
                     //console.log('PT State:',PTSumState );
                     //console.log('-------------------------------------------------------------------');
                 }
                 //resetting for new Requirement
                 activeReq = 'false';
-                activePFTC ='false';
+                activeTC ='false';
                 activeReqTestStateSum = [];
                 attachedTCPTStatesSum = [];
+                allTestStates = [];
             break;
 
             case 'sow':
@@ -659,12 +678,13 @@ function main(){
 //                    console.log('different')
 //                }
 
-                activePFTC = 'true';
+                activeTC = 'true';
                 activeReqTestStateSum.push(State);
                 attachedTCStates.PT1State = PT1States;
                 attachedTCStates.PT2State = PT2States;
                 attachedTCStates.PVSState = PVSStates;
                 attachedTCPTStatesSum.push(attachedTCStates);
+                allTestStates.push([State,attachedTCStates]);
 
 //                console.log('TCID:', pltfm_tc_id, '| TC State:',State,'| PT1:',PT1States,'| PT2:',PT2States,'| PVS:',PVSStates);
 //                console.log('TCID:', pltfm_tc_id,'| PT1:',PT1States,'| PT2:',PT2States,'| PVS:',PVSStates);
@@ -681,6 +701,7 @@ function main(){
 
     var posSOWTestCoverage = MS2StatusMask.PosTested + MS2StatusMask.RestTested + MS3StatusMask.PosTested + MS3StatusMask.RestTested + MS4StatusMask.PosTested + MS4StatusMask.RestTested;
     createTable(OverviewTable);
+    //console.log(DepartmentOverview)
 // ---------------------------------------------------------------------//
 // Print google Charts
 // ---------------------------------------------------------------------//
