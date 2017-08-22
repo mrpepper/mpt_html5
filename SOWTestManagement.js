@@ -102,6 +102,7 @@ function main(){
 // add Table
 // ---------------------------------------------------------------------//
     function createTable(tableData) {
+        var headingData = ['ID', 'Subject', 'Milestone', 'SIL', 'Test State', 'PT Test State', 'Test Platforms'];
         //remove preveous table
         $("#OverviewTable").remove();
         //create the new table
