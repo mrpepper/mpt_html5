@@ -128,6 +128,8 @@ function main(){
         tableBody.setAttribute("class", "table table-striped");
         tableData.forEach(function(rowData) {
             var row = document.createElement('tr');
+            row.setAttribute("class", "clickable-row");
+            row.setAttribute("data-href", "integrity://lanwinsvmks1.eu.adglob.net:8001/im/viewissue?selection=884657")
 
             rowData.forEach(function(cellData) {
                 var cell = document.createElement('td');
@@ -432,7 +434,8 @@ function main(){
 // ---------------------------------------------------------------------//
 // calculte Testing State for a Reqirement from linked Test Cases PT Test States
 // ---------------------------------------------------------------------//
-    function handleTCPTStates(ReqMS, allPTTCStatesFromReq, TCTestState){
+    function handleTCPTStates(ReqMS, SOWTPFs, TCdata){
+        //selectedTestPlatform
         var sumState = 'notRelevant';
         var finish = 'false';
         var PTsumStates = {PT1State:'',PT2State:'',PVSState:''};
@@ -463,17 +466,17 @@ function main(){
 
 
             sumState = 'notRelevant';
-            for (var i = 0; i < allPTTCStatesFromReq.length; i++) { //PT Gen Testresults PT1/PT2/PVS
+            for (var i = 0; i < TCdata.length; i++) { //PT Gen Testresults PT1/PT2/PVS
+                var PTState = TCdata[i][PTGens[j]];
                 // check if TC is not to verify in current Generation
                 // and set to previous gen State if 'TC not to Verify'
-                var PTState = allPTTCStatesFromReq[i][PTGens[j]];
-                if (j !== 0 && allPTTCStatesFromReq[i][PTGens[j]] == 'TC not to Verify'){
-                    PTState = allPTTCStatesFromReq[i][PTGens[j-1]];
-                    if (j-1 !== 0 && allPTTCStatesFromReq[i][PTGens[j-1]] == 'TC not to Verify'){
-                    PTState = allPTTCStatesFromReq[i][PTGens[j-2]];
+                if (j !== 0 && TCdata[i][PTGens[j]] == 'TC not to Verify'){
+                    PTState = TCdata[i][PTGens[j-1]];
+                    if (j-1 !== 0 && TCdata[i][PTGens[j-1]] == 'TC not to Verify'){
+                    PTState = TCdata[i][PTGens[j-2]];
                     }
                 }
-
+                //console.log(PTState)
                 switch (PTState)
                 { //PosTested, PartTested, PartTestWithRest, UnTested, NegTested, noTC, notRelevant
                     case 'TC to Verify':
@@ -618,7 +621,7 @@ function main(){
                     // ---------------------------------------------------------------------//
 
                     //calculate SOW Test Status from PT gen Test States
-                    var PTSumState = handleTCPTStates(ReqMilestone, SOWAffectedTestPlatforms, PTTCStateSum,allTCdata);
+                    var PTSumState = handleTCPTStates(ReqMilestone, SOWAffectedTestPlatforms, allTCdata);
                     var combinedPTTestStates = combinePTTestStates(activeReqTestState, PTSumState);
                     CountPTPlanningState(ReqMilestone,combinedPTTestStates);
                     // ---------------------------------------------------------------------//
@@ -636,10 +639,10 @@ function main(){
                     //console.log('-------------------------------------------------------------------');
                 }
                 //resetting for new Requirement
+                PTSumState = [];
                 activeReq = 'false';
                 activeTC ='false';
                 TCStateSum = [];
-                PTTCStateSum = [];
                 allTCdata = [];
             break;
 
@@ -678,7 +681,6 @@ function main(){
                 PTTCStates.PVSState = PVSState;
                 PTTCStateSum.push(PTTCStates);
 
-                var TCdata = {TCState:'',PT1State:'',PT2State:'',TestPF:''};
                 TCdata.TCState = State;
                 TCdata.PT1State = PT1State;
                 TCdata.PT2State = PT2State;
