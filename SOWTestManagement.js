@@ -278,111 +278,111 @@ function main(){
 // ---------------------------------------------------------------------//
 // calculte Testing State for a Reqirement from linked Test Cases PT Test States
 // ---------------------------------------------------------------------//
-    function handleTCPTState(oldSumState, MS, States){
-        var sumState = '';
-        //if Tescase state in this Milstone is 'TC not to Verify' look in previous Milestones.
-        if (States[MS] == 'TC not to Verify' && MS == 'PVSState'){
-            MS = 'PT2State';
-        }
-        else if (States[MS] == 'TC not to Verify' && MS == 'PT2State'){
-            MS = 'PT1State';
-        }
-
-        switch (States[MS])
-        {
-            case 'TC to Verify':
-                if(oldSumState == 'PosTested'){
-                //if posTested and new untested goto PartTested
-                    sumState = 'PartTested';
-                }//if PartTested and new Untested stay at Parttested
-                else if(oldSumState == 'PartTested'){
-                    sumState = 'PartTested';
-                }//if RestTested and new Untested goto PartTestWithRest
-                else if(oldSumState == 'RestTested'){
-                    sumState = 'PartTestWithRest';
-                }//if PartTestWithRest stay at PartTestWithRest
-                else if(oldSumState == 'PartTestWithRest'){
-                    sumState = 'PartTestWithRest';
-                }
-                else {
-                    sumState = 'UnTested';
-                }
-            break;
-            case 'TC Completed with Restriction':
-                if(oldSumState == 'UnTested'){
-                    sumState = 'PartTestWithRest';
-                }//if UnTested goto PartTestWithRest
-                else {
-                    sumState = 'RestTested';
-                }
-            break;
-            case 'TC Completed':
-                //in case only one TC attached and positive
-                if (oldSumState == '' || oldSumState == 'noRelevantTC') {
-                    sumState = 'PosTested';
-                }
-            break;
-            case 'TC Failed':
-                sumState = 'NegTested';
-            break;
-            case 'TC not to Verify':
-                //if Milestone is MS2 and TC is 'TC not to Verify'
-            case ' ':
-            default:
-                // if Test Case State for this Release is empty
-                // it is not relevant for this Release
-                // also no other States are considered
-                if (oldSumState == '' || oldSumState == 'noRelevantTC' ){
-                    sumState = 'noRelevantTC';
-                } else {
-                    sumState = oldSumState;
-                }
-            break;
-        }
-        return sumState;
-    }
+////    function handleTCPTState(oldSumState, MS, States){
+////        var sumState = '';
+////        //if Tescase state in this Milstone is 'TC not to Verify' look in previous Milestones.
+////        if (States[MS] == 'TC not to Verify' && MS == 'PVSState'){
+////            MS = 'PT2State';
+////        }
+////        else if (States[MS] == 'TC not to Verify' && MS == 'PT2State'){
+////            MS = 'PT1State';
+////        }
+////
+////        switch (States[MS])
+////        {
+////            case 'TC to Verify':
+////                if(oldSumState == 'PosTested'){
+////                //if posTested and new untested goto PartTested
+////                    sumState = 'PartTested';
+////                }//if PartTested and new Untested stay at Parttested
+////                else if(oldSumState == 'PartTested'){
+////                    sumState = 'PartTested';
+////                }//if RestTested and new Untested goto PartTestWithRest
+////                else if(oldSumState == 'RestTested'){
+////                    sumState = 'PartTestWithRest';
+////                }//if PartTestWithRest stay at PartTestWithRest
+////                else if(oldSumState == 'PartTestWithRest'){
+////                    sumState = 'PartTestWithRest';
+////                }
+////                else {
+////                    sumState = 'UnTested';
+////                }
+////            break;
+////            case 'TC Completed with Restriction':
+////                if(oldSumState == 'UnTested'){
+////                    sumState = 'PartTestWithRest';
+////                }//if UnTested goto PartTestWithRest
+////                else {
+////                    sumState = 'RestTested';
+////                }
+////            break;
+////            case 'TC Completed':
+////                //in case only one TC attached and positive
+////                if (oldSumState == '' || oldSumState == 'noRelevantTC') {
+////                    sumState = 'PosTested';
+////                }
+////            break;
+////            case 'TC Failed':
+////                sumState = 'NegTested';
+////            break;
+////            case 'TC not to Verify':
+////                //if Milestone is MS2 and TC is 'TC not to Verify'
+////            case ' ':
+////            default:
+////                // if Test Case State for this Release is empty
+////                // it is not relevant for this Release
+////                // also no other States are considered
+////                if (oldSumState == '' || oldSumState == 'noRelevantTC' ){
+////                    sumState = 'noRelevantTC';
+////                } else {
+////                    sumState = oldSumState;
+////                }
+////            break;
+////        }
+////        return sumState;
+////    }
 
 // ---------------------------------------------------------------------//
 // calculate Testing State from linked Test Cases PT1/PT2/PVS States
 // ---------------------------------------------------------------------//
-    function handleAttachedTCState(ReqMS,ReqTCStatesSum){
-        //sum States: noTC, UnTested, NegTested, RestTested, //
-        //            PartTested, PartTestWithRest, PosTested, notRelevant//
-        var PTsumState = '';
-        var slicedReqMS = ReqMS.substring(0,3);
-
-        for (var i = 0; i < ReqTCStatesSum.length; i++) {
-
-            switch (slicedReqMS)
-                {
-                    case 'MS2':
-                        PTsumState = handleTCPTState(PTsumState, 'PT1State', ReqTCStatesSum[i]);
-                    break;
-                    case 'MS3':
-                        PTsumState = handleTCPTState(PTsumState, 'PT2State', ReqTCStatesSum[i]);
-                    break;
-                    case 'MS4':
-                        PTsumState = handleTCPTState(PTsumState, 'PVSState', ReqTCStatesSum[i]);
-                    break;
-                    default:
-                    break;
-                }
-        }
-        return PTsumState;
-    }
+////    function handleAttachedTCState(ReqMS,ReqTCStatesSum){
+////        //sum States: noTC, UnTested, NegTested, RestTested, //
+////        //            PartTested, PartTestWithRest, PosTested, notRelevant//
+////        var PTsumState = '';
+////        var slicedReqMS = ReqMS.substring(0,3);
+////
+////        for (var i = 0; i < ReqTCStatesSum.length; i++) {
+////
+////            switch (slicedReqMS)
+////                {
+////                    case 'MS2':
+////                        PTsumState = handleTCPTState(PTsumState, 'PT1State', ReqTCStatesSum[i]);
+////                    break;
+////                    case 'MS3':
+////                        PTsumState = handleTCPTState(PTsumState, 'PT2State', ReqTCStatesSum[i]);
+////                    break;
+////                    case 'MS4':
+////                        PTsumState = handleTCPTState(PTsumState, 'PVSState', ReqTCStatesSum[i]);
+////                    break;
+////                    default:
+////                    break;
+////                }
+////        }
+////        return PTsumState;
+////    }
 
 // ---------------------------------------------------------------------//
 // combine PT States and TC State to one TestState for the Requirement
 // ---------------------------------------------------------------------//
-    function combineTestStates(TCState,PTState){
-        var combinedState = '';
-        if (PTState == 'noRelevantTC'){
-            combinedState = TCState;
-        } else {
-            combinedState = PTState;
-        }
-        return combinedState;
-    }
+////    function combineTestStates(TCState,PTState){
+////        var combinedState = '';
+////        if (PTState == 'noRelevantTC'){
+////            combinedState = TCState;
+////        } else {
+////            combinedState = PTState;
+////        }
+////        return combinedState;
+////    }
 
 // ---------------------------------------------------------------------//
 // combine PT States and TC State to one TestState for the Requirement
@@ -612,27 +612,27 @@ function main(){
                     //console.log('SOWTPF:', SOWAffectedTestPlatforms,' ProjTC:',ProjTCTestPlatform,' PFTC:',PFTCTestPlatform);
 
                     //calculate SOW Test Status from TC Test State
-                    activeReqTestState = handleActiveReqTestState(activeReqTestStateSum);
-                    activeReqPTTestState = handleAttachedTCState(ReqMilestone,attachedTCPTStatesSum);
-                    combinedTestState = combineTestStates(activeReqTestState,activeReqPTTestState);
-                    CountPlanningState(ReqMilestone,combinedTestState);
+                    activeReqTestState = handleActiveReqTestState(TCStateSum);
+                    //activeReqPTTestState = handleAttachedTCState(ReqMilestone,PTTCStateSum);
+                    //combinedTestState = combineTestStates(activeReqTestState,activeReqPTTestState);
+                    CountPlanningState(ReqMilestone,activeReqTestState);
                     // ---------------------------------------------------------------------//
 
                     //calculate SOW Test Status from PT gen Test States
-                    var PTSumState = handleTCPTStates(ReqMilestone, attachedTCPTStatesSum, activeReqPTTestState);
+                    var PTSumState = handleTCPTStates(ReqMilestone, SOWAffectedTestPlatforms, PTTCStateSum,allTCdata);
                     var combinedPTTestStates = combinePTTestStates(activeReqTestState, PTSumState);
                     CountPTPlanningState(ReqMilestone,combinedPTTestStates);
                     // ---------------------------------------------------------------------//
 
                     //try to combine the calculation for PT Test State and TC Test State in one function
-                    handleTestStates(ReqMilestone,allTestStates);
+                    //handleTestStates(ReqMilestone,allTCdata);
                     // ---------------------------------------------------------------------//
 
                     generateDepartmentOverview(SOWAffectedTestPlatforms);
 
                     OverviewTable.push([SOW_id, SOWSubject, ReqMilestone, SOWSIL, activeReqTestState, PTSumState.PT1State , PTSumState.PT2State, PTSumState.PVSState,SOWAffectedTestPlatforms]);
 
-                    console.log('Sum State:', combinedTestState, '| TC State:', activeReqTestState, '| PT State:',PTSumState );//activeReqPTTestState
+                    //console.log('Sum State:', combinedTestState, '| TC State:', activeReqTestState, '| PT State:',PTSumState );//activeReqPTTestState
                     //console.log('PT State:',PTSumState );
                     //console.log('-------------------------------------------------------------------');
                 }
