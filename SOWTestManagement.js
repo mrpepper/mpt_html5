@@ -103,7 +103,7 @@ function main(){
 // add Table
 // ---------------------------------------------------------------------//
     function createTable(tableData) {
-        var headingData = ['ID', 'Subject', 'Milestone', 'SIL', 'Test State', 'PT Test State', 'Test Platforms'];
+        var headingData = ['ID', 'Subject', 'Milestone', 'SIL', 'Test State', 'SR2 Test State', 'SR3 Test State', 'SR4 Test State','Test Platforms'];
         //remove preveous table
         $("#OverviewTable").remove();
         //create the new table
@@ -630,7 +630,7 @@ function main(){
 
                     generateDepartmentOverview(SOWAffectedTestPlatforms);
 
-                    OverviewTable.push([SOW_id,SOWSubject, ReqMilestone, SOWSIL, activeReqTestState, activeReqPTTestState, SOWAffectedTestPlatforms]);
+                    OverviewTable.push([SOW_id, SOWSubject, ReqMilestone, SOWSIL, activeReqTestState, PTSumState.PT1State , PTSumState.PT2State, PTSumState.PVSState,SOWAffectedTestPlatforms]);
 
                     console.log('Sum State:', combinedTestState, '| TC State:', activeReqTestState, '| PT State:',PTSumState );//activeReqPTTestState
                     //console.log('PT State:',PTSumState );
