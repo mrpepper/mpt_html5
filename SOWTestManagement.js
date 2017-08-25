@@ -460,9 +460,8 @@ function main(){
 
         //iterate over all TCs from one SOW, first over one PT generation for every TC then go to next PT generation
         for (var j = PTGenCount; j < PTGens.length; j++) { //Generations
-//            if (PTsumStates[PTGens[j-1]] == 'notRelevant'){
-//                PTsumStates[PTGens[j-1]] = TCTestState;
-//            }
+
+
             sumState = 'notRelevant';
             for (var i = 0; i < allPTTCStatesFromReq.length; i++) { //PT Gen Testresults PT1/PT2/PVS
                 // check if TC is not to verify in current Generation
