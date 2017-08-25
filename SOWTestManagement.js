@@ -64,7 +64,7 @@ $(document).ready(function() {
 // ---------------------------------------------------------------------//
 function main(){
     var SOWReqCount = 0;
-    var activeReqTestStateSum = [];
+    var TCStateSum = [];
     var attachedTCStatePT1Sum = [];
     var attachedTCStatePT2Sum = [];
     var attachedTCStatePVSSum = [];
@@ -90,7 +90,7 @@ function main(){
     var MS3Count = 0;
     var MS4Count = 0;
     var noMSplanned = 0;
-    var attachedTCPTStatesSum = [];
+    var PTTCStateSum = [];
     var allTestState = [];
     var selectedTestPlatform = $( "#selected_Test_Platforms" ).val();
     var selectedSILrelevant = $( "#selected_SIL_relevant" ).val();
@@ -591,9 +591,9 @@ function main(){
     $('tbody tr').each(function() {
         var Type = $(this).find('td.Type').text();
         var Milestone = $(this).find('td.Milestone').text();
-        var PT1States = $(this).find('td.State.PT1').text();
-        var PT2States = $(this).find('td.State.PT2').text();
-        var PVSStates = $(this).find('td.State.PVS').text();
+        var PT1State = $(this).find('td.State.PT1').text();
+        var PT2State = $(this).find('td.State.PT2').text();
+        var PVSState = $(this).find('td.State.PVS').text();
         var TestPlatformOfReq = $(this).find('td.Affected').text(); //Affected Test Platforms
         var validTPF = checkString(TestPlatformOfReq,selectedTestPlatform);
         var SILLevelofReq = $(this).find('td.SIL').text();
@@ -639,9 +639,9 @@ function main(){
                 //resetting for new Requirement
                 activeReq = 'false';
                 activeTC ='false';
-                activeReqTestStateSum = [];
-                attachedTCPTStatesSum = [];
-                allTestStates = [];
+                TCStateSum = [];
+                PTTCStateSum = [];
+                allTCdata = [];
             break;
 
             case 'sow':
@@ -667,24 +667,25 @@ function main(){
             case 'test_case':
                 var State = this.getElementsByClassName('State')[0].childNodes[0].nodeValue;
                 var pltfm_tc_id = this.getElementsByClassName('ID')[0].childNodes[0].nodeValue;
-                var attachedTCStates = {PT1State:'',PT2State:'',PVSState:''};
+                var PTTCStates = {PT1State:'',PT2State:'',PVSState:''};
                 PFTCTestPlatform = this.getElementsByClassName('Platform')[0].childNodes[0].nodeValue;
                 if (activeReq == 'true') {
                     PFTCCount++;
                 }
-//                if(checkString(SOWAffectedTestPlatforms,PFTCTestPlatform) == 'valid'){
-//                    console.log('same')
-//                } else {
-//                    console.log('different')
-//                }
-
                 activeTC = 'true';
-                activeReqTestStateSum.push(State);
-                attachedTCStates.PT1State = PT1States;
-                attachedTCStates.PT2State = PT2States;
-                attachedTCStates.PVSState = PVSStates;
-                attachedTCPTStatesSum.push(attachedTCStates);
-                allTestStates.push([State,attachedTCStates]);
+                TCStateSum.push(State);
+                PTTCStates.PT1State = PT1State;
+                PTTCStates.PT2State = PT2State;
+                PTTCStates.PVSState = PVSState;
+                PTTCStateSum.push(PTTCStates);
+
+                var TCdata = {TCState:'',PT1State:'',PT2State:'',TestPF:''};
+                TCdata.TCState = State;
+                TCdata.PT1State = PT1State;
+                TCdata.PT2State = PT2State;
+                TCdata.PVSState = PVSState;
+                TCdata.TestPF = PFTCTestPlatform;
+                allTCdata.push(TCdata);
 
 //                console.log('TCID:', pltfm_tc_id, '| TC State:',State,'| PT1:',PT1States,'| PT2:',PT2States,'| PVS:',PVSStates);
 //                console.log('TCID:', pltfm_tc_id,'| PT1:',PT1States,'| PT2:',PT2States,'| PVS:',PVSStates);
