@@ -575,14 +575,6 @@ function main(){
                   }
               }
           }
-          return retCode;
-    }
-
-// ---------------------------------------------------------------------//
-// combined calculation for test states
-// ---------------------------------------------------------------------//
-    function handleTestStates(ReqMS,TestStates){
-
     }
 
 
