@@ -626,7 +626,7 @@ function main(){
 
                     OverviewTable.push([SOW_id, SOWSubject, ReqMilestone, SOWSIL, activeReqTestState, PTSumState.PT1State , PTSumState.PT2State, PTSumState.PVSState,SOWAffectedTestPlatforms]);
 
-                    //console.log('Sum State:', combinedTestState, '| TC State:', activeReqTestState, '| PT State:',PTSumState );//activeReqPTTestState
+                    //console.log('TC State:', activeReqTestState, '| PT State:',PTSumState );
                     //console.log('PT State:',PTSumState );
                     //console.log('-------------------------------------------------------------------');
                 }
