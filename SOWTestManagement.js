@@ -433,6 +433,57 @@ function main(){
         }
     }
 
+
+// ---------------------------------------------------------------------//
+// reduce Array
+// ---------------------------------------------------------------------//
+    function reduceArray(removefromArray, deleterArray, removeIfNOTInDeleterArray){
+        if(typeof removefromArray == 'undefined'){
+            removefromArray = [];
+        }
+        else if (removeIfNOTInDeleterArray == false) {
+            for (var j in deleterArray){
+                if(removefromArray.indexOf(deleterArray[j]) > -1){
+                    var pos = removefromArray.indexOf(deleterArray[j]);
+                    removefromArray.splice(pos,1);
+                }
+            }
+        }
+        else if (removeIfNOTInDeleterArray == true){
+            for (var i in removefromArray){
+                if (deleterArray.indexOf(removefromArray[i]) == -1 ){
+                    removefromArray.splice(i,1);
+                }
+            }
+        }
+        return removefromArray;
+    }
+
+
+// ---------------------------------------------------------------------//
+// String to Array
+// ---------------------------------------------------------------------//
+    function stringtoArray(String,Separator){
+        if(String !== '' && String !== null && String !== '\xa0'){ //\xa0 == &nbsp;
+            //Split String if there is more than one entry: separated by: Separator
+            var Array = String.split(Separator);
+            for (var i = 0; i < Array.length; i++) {
+                Array[i] = Array[i].trim();
+            }
+        }
+        return Array;
+    }
+
+    // ---------------------------------------------------------------------//
+    // Add  to Array if new
+    // ---------------------------------------------------------------------//
+        function addtoArray(Array,Value){
+            if(Array.indexOf(Value) == -1){
+                Array.push(Value);
+            }
+            return Array;
+        }
+
 // ---------------------------------------------------------------------//
 // calculte Testing State for a Reqirement from linked Test Cases PT Test States
 // ---------------------------------------------------------------------//
