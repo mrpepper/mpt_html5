@@ -495,7 +495,21 @@ function main(){
         var PTGens = ['PT1State', 'PT2State', 'PVSState'];
         var slicedReqMS = ReqMS.substring(0,3);
         var PTGenCount = 0;
+        var collectedTCTPFs = [];
+        // collectTestplatform from SOW
+        var SOWTPFs = stringtoArray(SOWTPFstring,",");
 
+
+        //collect Testplatforms from Test Cases and add to array if New
+        for (var i = 0; i < TCdata.length; i++) {
+            collectedTCTPFs = addtoArray(collectedTCTPFs, TCdata[i].TestPF);
+        }
+
+        //reduce Array by items from TPF selection from the menu
+        var redbySelction = reduceArray(collectedTCTPFs, selectedTestPlatforms,true);
+
+        //how many Testplatforms from SOW are not covered by Testplatforms from Testcase
+        var TPFsleft = reduceArray(SOWTPFs,redbySelction,false);
 
         //choose PT Generations to analyse, concerning the Requirement Milestone
         switch (slicedReqMS)
@@ -521,6 +535,9 @@ function main(){
             sumState = 'notRelevant';
             for (var i = 0; i < TCdata.length; i++) { //PT Gen Testresults PT1/PT2/PVS
                 var PTState = TCdata[i][PTGens[j]];
+
+
+
                 // check if TC is not to verify in current Generation
                 // and set to previous gen State if 'TC not to Verify'
                 if (j !== 0 && TCdata[i][PTGens[j]] == 'TC not to Verify'){
@@ -603,6 +620,24 @@ function main(){
                 }
             }//inner loop
         }//outer loop
+
+
+        // in case SOW Affected Testplatform Contains a Testplatform that was not included in the Test Cases, set the Status to 'TCmissing'
+        if (TPFsleft.length > 0){
+            for (var key in PTsumStates) {
+                if(PTsumStates[key] == 'NegTested')
+                {
+                    PTsumStates[key] = 'NegTested';
+                } else if(PTsumStates[key] == '')
+                {
+                    PTsumStates[key] = '';
+                } else
+                {
+                    PTsumStates[key] = 'TCmissing';
+                }
+            }
+        }
+
         return PTsumStates;
     }
 
