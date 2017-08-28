@@ -65,6 +65,8 @@ $(document).ready(function() {
 function main(){
     var SOWReqCount = 0;
     var TCStateSum = [];
+    var TCdata = {TCState:'',PT1State:'',PT2State:'',TestPF:''};
+    var allTCdata = [];
     var attachedTCStatePT1Sum = [];
     var attachedTCStatePT2Sum = [];
     var attachedTCStatePVSSum = [];
