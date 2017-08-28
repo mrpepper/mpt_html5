@@ -554,29 +554,53 @@ function main(){
     }
 
 // ---------------------------------------------------------------------//
-//Generate Department Overview
+//coun Values and store in SumObject
 // ---------------------------------------------------------------------//
-    function generateDepartmentOverview(TestPF){
+    function countValue(Value, SumObject){
           retCode = 'false';
-          if(TestPF !== '' && TestPF !== null && TestPF !== '\xa0'){ //\xa0 == &nbsp;
+          if(Value !== '' && Value !== null && Value !== '\xa0'){ //\xa0 == &nbsp;
               //Split PFString if there is more than one TestPlatform: separated by: ,
-              var splitPFString = TestPF.split(',');
-              for (var i = 0; i < splitPFString.length; i++) {
-                  var cutPFString = splitPFString[i].split('-');
-                  DepartmentString = cutPFString[0].trim();
+              var splitString = Value.split(',');
+              for (var i = 0; i < splitString.length; i++) {
+                  var trimmedString = splitString[i].trim();
 
-                  if (DepartmentString in DepartmentOverview)
+                  if (trimmedString in SumObject)
                   {
-                      DepartmentOverview[DepartmentString]++;
+                      SumObject[trimmedString]++;
                   }
                   else
                   {
-                      DepartmentOverview[DepartmentString] = 1;
+                      SumObject[trimmedString] = 1;
                   }
               }
           }
+          return SumObject;
     }
 
+    // ---------------------------------------------------------------------//
+    //Generate Department Overview
+    // ---------------------------------------------------------------------//
+        function DepOverview(TestPF, SumObject){
+              retCode = 'false';
+              if(TestPF !== '' && TestPF !== null && TestPF !== '\xa0'){ //\xa0 == &nbsp;
+                  //Split PFString if there is more than one TestPlatform: separated by: ,
+                  var splitPFString = TestPF.split(',');
+                  for (var i = 0; i < splitPFString.length; i++) {
+                      var cutPFString = splitPFString[i].split('-');
+                      DepartmentString = cutPFString[0].trim();
+
+                      if (DepartmentString in SumObject)
+                      {
+                          SumObject[DepartmentString]++;
+                      }
+                      else
+                      {
+                          SumObject[DepartmentString] = 1;
+                      }
+                  }
+              }
+              return SumObject;
+        }
 
 // ---------------------------------------------------------------------//
 // Main Routine: parse HTML trou tbody > tr
@@ -622,7 +646,7 @@ function main(){
                     //handleTestStates(ReqMilestone,allTCdata);
                     // ---------------------------------------------------------------------//
 
-                    generateDepartmentOverview(SOWAffectedTestPlatforms);
+                    DepartmentOverview = DepOverview(SOWAffectedTestPlatforms, DepartmentOverview);
 
                     OverviewTable.push([SOW_id, SOWSubject, ReqMilestone, SOWSIL, activeReqTestState, PTSumState.PT1State , PTSumState.PT2State, PTSumState.PVSState,SOWAffectedTestPlatforms]);
 
