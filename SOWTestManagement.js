@@ -78,21 +78,21 @@ function main(){
     var SOWAffectedTestPlatforms = '';
     var ProjTCTestPlatform = '';
     var PFTCTestPlatform = '';
-    var AllStatusMask = {noTC:0,UnTested:0,NegTested:0,RestTested:0,PartTested:0,PartTestWithRest:0,PosTested:0};
-    var MS2StatusMask = {noTC:0,UnTested:0,NegTested:0,RestTested:0,PartTested:0,PartTestWithRest:0,PosTested:0};
-    var MS3StatusMask = {noTC:0,UnTested:0,NegTested:0,RestTested:0,PartTested:0,PartTestWithRest:0,PosTested:0};
-    var MS4StatusMask = {noTC:0,UnTested:0,NegTested:0,RestTested:0,PartTested:0,PartTestWithRest:0,PosTested:0};
-    var MSotherStatusMask = {noTC:0,UnTested:0,NegTested:0,RestTested:0,PartTested:0,PartTestWithRest:0,PosTested:0};
-    var MS2PTStatusMask = {noTC:0,UnTested:0,NegTested:0,RestTested:0,PartTested:0,PartTestWithRest:0,PosTested:0};
-    var MS3PTStatusMask = {noTC:0,UnTested:0,NegTested:0,RestTested:0,PartTested:0,PartTestWithRest:0,PosTested:0};
-    var MS4PTStatusMask = {noTC:0,UnTested:0,NegTested:0,RestTested:0,PartTested:0,PartTestWithRest:0,PosTested:0};
+    var AllStatusMask = {TCmissing:0,UnTested:0,NegTested:0,RestTested:0,PartTested:0,PartTestWithRest:0,PosTested:0};
+    var MS2StatusMask = {TCmissing:0,UnTested:0,NegTested:0,RestTested:0,PartTested:0,PartTestWithRest:0,PosTested:0};
+    var MS3StatusMask = {TCmissing:0,UnTested:0,NegTested:0,RestTested:0,PartTested:0,PartTestWithRest:0,PosTested:0};
+    var MS4StatusMask = {TCmissing:0,UnTested:0,NegTested:0,RestTested:0,PartTested:0,PartTestWithRest:0,PosTested:0};
+    var MSotherStatusMask = {TCmissing:0,UnTested:0,NegTested:0,RestTested:0,PartTested:0,PartTestWithRest:0,PosTested:0};
+    var MS2PTStatusMask = {TCmissing:0,UnTested:0,NegTested:0,RestTested:0,PartTested:0,PartTestWithRest:0,PosTested:0};
+    var MS3PTStatusMask = {TCmissing:0,UnTested:0,NegTested:0,RestTested:0,PartTested:0,PartTestWithRest:0,PosTested:0};
+    var MS4PTStatusMask = {TCmissing:0,UnTested:0,NegTested:0,RestTested:0,PartTested:0,PartTestWithRest:0,PosTested:0};
     var MS2Count = 0;
     var MS3Count = 0;
     var MS4Count = 0;
     var noMSplanned = 0;
     var PTTCStateSum = [];
     var allTestState = [];
-    var selectedTestPlatform = $( "#selected_Test_Platforms" ).val();
+    var selectedTestPlatforms = $( "#selected_Test_Platforms" ).val();
     var selectedSILrelevant = $( "#selected_SIL_relevant" ).val();
     var OverviewTable = [];
     var SOWSubject = '';
@@ -219,9 +219,9 @@ function main(){
 // calculte Testing State for a Reqirement from several linked Test Cases
 // ---------------------------------------------------------------------//
     function handleActiveReqTestState(activeReqTestState){
-        //sum States: noTC, UnTested, NegTested, RestTested, //
+        //sum States: TCmissing, UnTested, NegTested, RestTested, //
         //            PartTested, PartTestWithRest, PosTested//
-        var sumState = 'noTC';
+        var sumState = 'TCmissing';
         var finish = 'false';
 //        console.log(activeReqTestState);
         for (var i = 0; i < activeReqTestState.length; i++) {
@@ -259,7 +259,7 @@ function main(){
                 break;
                 case 'TC Completed':
                     //in case only one TC attached and positive
-                    if (sumState == 'noTC') {
+                    if (sumState == 'TCmissing') {
                         sumState = 'PosTested';
                     }
                 break;
@@ -348,7 +348,7 @@ function main(){
 // calculate Testing State from linked Test Cases PT1/PT2/PVS States
 // ---------------------------------------------------------------------//
 ////    function handleAttachedTCState(ReqMS,ReqTCStatesSum){
-////        //sum States: noTC, UnTested, NegTested, RestTested, //
+////        //sum States: TCmissing, UnTested, NegTested, RestTested, //
 ////        //            PartTested, PartTestWithRest, PosTested, notRelevant//
 ////        var PTsumState = '';
 ////        var slicedReqMS = ReqMS.substring(0,3);
@@ -404,20 +404,20 @@ function main(){
     function CountPTPlanningState(ReqMS,PTSum){
         var slicedReqMS = ReqMS.substring(0,3);
 
-        if (PTSum == 'noTC'){
+        if (PTSum == 'TCmissing'){
             switch (slicedReqMS)
             {
                 case 'MS2':
-                    MS2PTStatusMask.noTC++;
-                    MS3PTStatusMask.noTC++;
-                    MS4PTStatusMask.noTC++;
+                    MS2PTStatusMask.TCmissing++;
+                    MS3PTStatusMask.TCmissing++;
+                    MS4PTStatusMask.TCmissing++;
                 break;
                 case 'MS3':
-                    MS3PTStatusMask.noTC++;
-                    MS4PTStatusMask.noTC++;
+                    MS3PTStatusMask.TCmissing++;
+                    MS4PTStatusMask.TCmissing++;
                 break;
                 case 'MS4':
-                    MS4PTStatusMask.noTC++;
+                    MS4PTStatusMask.TCmissing++;
                 break;
                 default:
                 break;
@@ -434,8 +434,8 @@ function main(){
 // ---------------------------------------------------------------------//
 // calculte Testing State for a Reqirement from linked Test Cases PT Test States
 // ---------------------------------------------------------------------//
-    function handleTCPTStates(ReqMS, SOWTPFs, TCdata){
-        //selectedTestPlatform
+    function handleTCPTStates(ReqMS, SOWTPFstring, TCdata){
+        //selectedTestPlatforms
         var sumState = 'notRelevant';
         var finish = 'false';
         var PTsumStates = {PT1State:'',PT2State:'',PVSState:''};
@@ -478,7 +478,7 @@ function main(){
                 }
                 //console.log(PTState)
                 switch (PTState)
-                { //PosTested, PartTested, PartTestWithRest, UnTested, NegTested, noTC, notRelevant
+                { //PosTested, PartTested, PartTestWithRest, UnTested, NegTested, TCmissing, notRelevant
                     case 'TC to Verify':
                         switch (sumState)
                         {
@@ -597,7 +597,7 @@ function main(){
         var PT2State = $(this).find('td.State.PT2').text();
         var PVSState = $(this).find('td.State.PVS').text();
         var TestPlatformOfReq = $(this).find('td.Affected').text(); //Affected Test Platforms
-        var validTPF = checkString(TestPlatformOfReq,selectedTestPlatform);
+        var validTPF = checkString(TestPlatformOfReq,selectedTestPlatforms);
         var SILLevelofReq = $(this).find('td.SIL').text();
         var useSILReq = checkSILString(SILLevelofReq);
 
@@ -605,9 +605,9 @@ function main(){
         {
             case 'sow_header':
                 if (activeReq == 'true' && activeTC == 'false'){
-                    CountPlanningState(ReqMilestone,'noTC');
-                    CountPTPlanningState(ReqMilestone,'noTC');
-//                    console.log('Sum State: noTC');
+                    CountPlanningState(ReqMilestone,'TCmissing');
+                    CountPTPlanningState(ReqMilestone,'TCmissing');
+//                    console.log('Sum State: TCmissing');
 //                    console.log('-------------------------------------------------------------------');
                 }
                 else if (activeReq == 'true' && activeTC == 'true'){
@@ -688,8 +688,8 @@ function main(){
                 TCdata.TestPF = PFTCTestPlatform;
                 allTCdata.push(TCdata);
 
-//                console.log('TCID:', pltfm_tc_id, '| TC State:',State,'| PT1:',PT1States,'| PT2:',PT2States,'| PVS:',PVSStates);
-//                console.log('TCID:', pltfm_tc_id,'| PT1:',PT1States,'| PT2:',PT2States,'| PVS:',PVSStates);
+                //console.log('TCID:', pltfm_tc_id, '| TC State:',State,'|, PT1:',PT1State,'| PT2:',PT2State,'| PVS:',PVSState);
+                //console.log('TCID:', pltfm_tc_id, '| TC State:',TCdata.TCState,'|, PT1:',TCdata.PT1State,'| PT2:',TCdata.PT2State,'| PVS:',TCdata.PVSState);
 
             break;
             default:
@@ -853,11 +853,11 @@ function main(){
     function drawTestCoverage(){
 
         var data = [
-            ['Release', 'no Test Case attached', 'negative tested', 'untested', 'partially tested','tested with restrictions','part tested with restrictions', 'positive tested'],
-//            ['All', AllStatusMask.noTC,AllStatusMask.NegTested,AllStatusMask.UnTested,AllStatusMask.RestTested,AllStatusMask.PartTestWithRest,AllStatusMask.PartTested,AllStatusMask.PosTested],
-            ['SR2', MS2StatusMask.noTC,MS2StatusMask.NegTested,MS2StatusMask.UnTested,MS2StatusMask.RestTested,MS2StatusMask.PartTestWithRest,MS2StatusMask.PartTested,MS2StatusMask.PosTested],
-            ['SR3', MS3StatusMask.noTC,MS3StatusMask.NegTested,MS3StatusMask.UnTested,MS3StatusMask.RestTested,MS3StatusMask.PartTestWithRest,MS3StatusMask.PartTested,MS3StatusMask.PosTested],
-            ['SR4', MS4StatusMask.noTC,MS4StatusMask.NegTested,MS4StatusMask.UnTested,MS4StatusMask.RestTested,MS4StatusMask.PartTestWithRest,MS4StatusMask.PartTested,MS4StatusMask.PosTested]
+            ['Release', 'Test Case missing', 'negative tested', 'untested', 'partially tested','tested with restrictions','part tested with restrictions', 'positive tested'],
+//            ['All', AllStatusMask.TCmissing,AllStatusMask.NegTested,AllStatusMask.UnTested,AllStatusMask.RestTested,AllStatusMask.PartTestWithRest,AllStatusMask.PartTested,AllStatusMask.PosTested],
+            ['SR2', MS2StatusMask.TCmissing,MS2StatusMask.NegTested,MS2StatusMask.UnTested,MS2StatusMask.RestTested,MS2StatusMask.PartTestWithRest,MS2StatusMask.PartTested,MS2StatusMask.PosTested],
+            ['SR3', MS3StatusMask.TCmissing,MS3StatusMask.NegTested,MS3StatusMask.UnTested,MS3StatusMask.RestTested,MS3StatusMask.PartTestWithRest,MS3StatusMask.PartTested,MS3StatusMask.PosTested],
+            ['SR4', MS4StatusMask.TCmissing,MS4StatusMask.NegTested,MS4StatusMask.UnTested,MS4StatusMask.RestTested,MS4StatusMask.PartTestWithRest,MS4StatusMask.PartTested,MS4StatusMask.PosTested]
         ];
         var aggregates = ["State", "Release"];
         var metrics = ["SOWs"];
@@ -934,16 +934,16 @@ function main(){
     function drawPTCoverage(){
 
 //        var data = google.visualization.arrayToDataTable([
-//            ['Release', 'no Test Case attached', 'negative tested', 'untested', 'partially tested','tested with restrictions','part tested with restrictions', 'positive tested'],
-//            ['SR2', MS2PTStatusMask.noTC,MS2PTStatusMask.NegTested,MS2PTStatusMask.UnTested,MS2PTStatusMask.RestTested,MS2PTStatusMask.PartTestWithRest,MS2PTStatusMask.PartTested,MS2PTStatusMask.PosTested],
-//            ['SR3', MS3PTStatusMask.noTC,MS3PTStatusMask.NegTested,MS3PTStatusMask.UnTested,MS3PTStatusMask.RestTested,MS3PTStatusMask.PartTestWithRest,MS3PTStatusMask.PartTested,MS3PTStatusMask.PosTested],
-//            ['SR4', MS4PTStatusMask.noTC,MS4PTStatusMask.NegTested,MS4PTStatusMask.UnTested,MS4PTStatusMask.RestTested,MS4PTStatusMask.PartTestWithRest,MS4PTStatusMask.PartTested,MS4PTStatusMask.PosTested],
+//            ['Release', 'Test Case missing', 'negative tested', 'untested', 'partially tested','tested with restrictions','part tested with restrictions', 'positive tested'],
+//            ['SR2', MS2PTStatusMask.TCmissing,MS2PTStatusMask.NegTested,MS2PTStatusMask.UnTested,MS2PTStatusMask.RestTested,MS2PTStatusMask.PartTestWithRest,MS2PTStatusMask.PartTested,MS2PTStatusMask.PosTested],
+//            ['SR3', MS3PTStatusMask.TCmissing,MS3PTStatusMask.NegTested,MS3PTStatusMask.UnTested,MS3PTStatusMask.RestTested,MS3PTStatusMask.PartTestWithRest,MS3PTStatusMask.PartTested,MS3PTStatusMask.PosTested],
+//            ['SR4', MS4PTStatusMask.TCmissing,MS4PTStatusMask.NegTested,MS4PTStatusMask.UnTested,MS4PTStatusMask.RestTested,MS4PTStatusMask.PartTestWithRest,MS4PTStatusMask.PartTested,MS4PTStatusMask.PosTested],
 //        ]);
         var data = [
-            ['Release', 'no Test Case attached', 'negative tested', 'untested', 'partially tested','tested with restrictions','part tested with restrictions', 'positive tested'],
-            ['SR2', MS2PTStatusMask.noTC,MS2PTStatusMask.NegTested,MS2PTStatusMask.UnTested,MS2PTStatusMask.RestTested,MS2PTStatusMask.PartTestWithRest,MS2PTStatusMask.PartTested,MS2PTStatusMask.PosTested],
-            ['SR3', MS3PTStatusMask.noTC,MS3PTStatusMask.NegTested,MS3PTStatusMask.UnTested,MS3PTStatusMask.RestTested,MS3PTStatusMask.PartTestWithRest,MS3PTStatusMask.PartTested,MS3PTStatusMask.PosTested],
-            ['SR4', MS4PTStatusMask.noTC,MS4PTStatusMask.NegTested,MS4PTStatusMask.UnTested,MS4PTStatusMask.RestTested,MS4PTStatusMask.PartTestWithRest,MS4PTStatusMask.PartTested,MS4PTStatusMask.PosTested],
+            ['Release', 'Test Case missing', 'negative tested', 'untested', 'partially tested','tested with restrictions','part tested with restrictions', 'positive tested'],
+            ['SR2', MS2PTStatusMask.TCmissing,MS2PTStatusMask.NegTested,MS2PTStatusMask.UnTested,MS2PTStatusMask.RestTested,MS2PTStatusMask.PartTestWithRest,MS2PTStatusMask.PartTested,MS2PTStatusMask.PosTested],
+            ['SR3', MS3PTStatusMask.TCmissing,MS3PTStatusMask.NegTested,MS3PTStatusMask.UnTested,MS3PTStatusMask.RestTested,MS3PTStatusMask.PartTestWithRest,MS3PTStatusMask.PartTested,MS3PTStatusMask.PosTested],
+            ['SR4', MS4PTStatusMask.TCmissing,MS4PTStatusMask.NegTested,MS4PTStatusMask.UnTested,MS4PTStatusMask.RestTested,MS4PTStatusMask.PartTestWithRest,MS4PTStatusMask.PartTested,MS4PTStatusMask.PosTested],
         ];
 
         var aggregates = ["State", "Release"];
