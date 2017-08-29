@@ -656,6 +656,8 @@ function main(){
             }
         }
 
+        CountPTPlanningState(ReqMS,PTsumStates);
+
         return PTsumStates;
     }
 
@@ -744,8 +746,8 @@ function main(){
 
                     //calculate SOW Test Status from PT gen Test States
                     var PTSumState = handleTCPTStates(ReqMilestone, SOWAffectedTestPlatforms, allTCdata);
-                    var combinedPTTestStates = combinePTTestStates(activeReqTestState, PTSumState);
-                    CountPTPlanningState(ReqMilestone,combinedPTTestStates);
+                    //var combinedPTTestStates = combinePTTestStates(activeReqTestState, PTSumState);
+                    //CountPTPlanningState(ReqMilestone,PTSumState);
                     // ---------------------------------------------------------------------//
 
                     //try to combine the calculation for PT Test State and TC Test State in one function
