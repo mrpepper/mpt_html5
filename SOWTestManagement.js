@@ -528,15 +528,33 @@ function main(){
             break;
         }
 
+        //check for TC with no PT States and substitute with TCState
+        for (var i = 0; i < TCdata.length; i++) {
+            var Gens = ['PT1State', 'PT2State', 'PVSState'];
+            var count = 0;
+            for (var j in Gens){
+                if(TCdata[i][Gens[j]] == '' || TCdata[i][Gens[j]] == null || TCdata[i][Gens[j]] == '\xa0'){ //\xa0 == &nbsp;
+                    count++;
+                }
+            }
+            if (count == 3){
+                for (var k in Gens){
+                    if(TCdata[i].TCState == 'TC New' || TCdata[i].TCState == 'TC Specified' || TCdata[i].TCState == 'TC on Work' || TCdata[i].TCState == 'TC Retest'){
+                        TCdata[i][Gens[k]] = 'TC to Verify';
+                    } else {
+                        TCdata[i][Gens[k]] = TCdata[i].TCState;
+                    }
+                }
+            }
+        }
+
+
         //iterate over all TCs from one SOW, first over one PT generation for every TC then go to next PT generation
         for (var j = PTGenCount; j < PTGens.length; j++) { //Generations
-
-
             sumState = 'notRelevant';
+
             for (var i = 0; i < TCdata.length; i++) { //PT Gen Testresults PT1/PT2/PVS
                 var PTState = TCdata[i][PTGens[j]];
-
-
 
                 // check if TC is not to verify in current Generation
                 // and set to previous gen State if 'TC not to Verify'
