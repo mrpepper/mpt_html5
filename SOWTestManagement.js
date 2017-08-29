@@ -1,9 +1,9 @@
 $(document).ready(function() {
     var availableTestPlatforms = [];
 
-// ---------------------------------------------------------------------//
-// generate List of available Testplatforms from HTML Table
-// ---------------------------------------------------------------------//
+    // ---------------------------------------------------------------------//
+    // generate List of available Testplatforms from HTML Table
+    // ---------------------------------------------------------------------//
     function aquireTestPlatforms(PFString){
         retCode = 'false';
         if(PFString !== '' && PFString !== null && PFString !== '\xa0'){ //\xa0 == &nbsp;
@@ -21,9 +21,9 @@ $(document).ready(function() {
         return retCode;
         }
 
-// ---------------------------------------------------------------------//
-// append List of available Testplatforms to HTML selector
-// ---------------------------------------------------------------------//
+    // ---------------------------------------------------------------------//
+    // append List of available Testplatforms to HTML selector
+    // ---------------------------------------------------------------------//
     function addTestPlatformsToSelector(){
         //availableTestPlatforms.push('-All-');
 
@@ -45,9 +45,9 @@ $(document).ready(function() {
     }
 
 
-// ---------------------------------------------------------------------//
-// find Affected TestPlatforms and add them to the selector
-// ---------------------------------------------------------------------//
+    // ---------------------------------------------------------------------//
+    // find Affected TestPlatforms and add them to the selector
+    // ---------------------------------------------------------------------//
     $('tbody tr').each(function() {
         var TestPlatform = $(this).find('td.Affected').text(); //Affected Test Platforms
         aquireTestPlatforms(TestPlatform);
@@ -101,9 +101,9 @@ function main(){
     var SOWSIL = '';
     var DepartmentOverview = {};
 
-// ---------------------------------------------------------------------//
-// add Table
-// ---------------------------------------------------------------------//
+    // ---------------------------------------------------------------------//
+    // add Table
+    // ---------------------------------------------------------------------//
     function createTable(tableData) {
         var headingData = ['ID', 'Subject', 'Milestone', 'SIL', 'Test State', 'SR2 Test State', 'SR3 Test State', 'SR4 Test State','Test Platforms'];
         //remove preveous table
@@ -149,14 +149,14 @@ function main(){
     }
 
 
-// ---------------------------------------------------------------------//
-// Count general Values over the whole HTML Data
-// ---------------------------------------------------------------------//
+    // ---------------------------------------------------------------------//
+    // Count general Values over the whole HTML Data
+    // ---------------------------------------------------------------------//
 
 
-// ---------------------------------------------------------------------//
-// check if String is equal to selection
-// ---------------------------------------------------------------------//
+    // ---------------------------------------------------------------------//
+    // check if String is equal to selection
+    // ---------------------------------------------------------------------//
     function checkString(String,SelectedValue){
         var retCode = 'false';
         var splitString = String.split(',');
@@ -170,9 +170,9 @@ function main(){
         return retCode;
     }
 
-// ---------------------------------------------------------------------//
-// check if SILString is equal to selection
-// ---------------------------------------------------------------------//
+    // ---------------------------------------------------------------------//
+    // check if SILString is equal to selection
+    // ---------------------------------------------------------------------//
     function checkSILString(SILString){
         var retCode = 'false';
         if (selectedSILrelevant == '-All-'){
@@ -189,9 +189,9 @@ function main(){
         return retCode;
     }
 
-// ---------------------------------------------------------------------//
-// Count Requirement Test States per Mielestone
-// ---------------------------------------------------------------------//
+    // ---------------------------------------------------------------------//
+    // Count Requirement Test States per Mielestone
+    // ---------------------------------------------------------------------//
     function CountPlanningState(ReqMS, Status){
         //only use 1st three Characters of Milestone e.g: MS2 of MS2.1
         var slicedReqMS = ReqMS.substring(0,3);
@@ -217,15 +217,15 @@ function main(){
         AllStatusMask[Status]++;
     }
 
-// ---------------------------------------------------------------------//
-// calculte Testing State for a Reqirement from several linked Test Cases
-// ---------------------------------------------------------------------//
+    // ---------------------------------------------------------------------//
+    // calculte Testing State for a Reqirement from several linked Test Cases
+    // ---------------------------------------------------------------------//
     function handleActiveReqTestState(activeReqTestState){
         //sum States: TCmissing, UnTested, NegTested, RestTested, //
         //            PartTested, PartTestWithRest, PosTested//
         var sumState = 'TCmissing';
         var finish = 'false';
-//        console.log(activeReqTestState);
+
         for (var i = 0; i < activeReqTestState.length; i++) {
 
             switch (activeReqTestState[i])
@@ -279,118 +279,9 @@ function main(){
         return sumState;
     }
 
-// ---------------------------------------------------------------------//
-// calculte Testing State for a Reqirement from linked Test Cases PT Test States
-// ---------------------------------------------------------------------//
-////    function handleTCPTState(oldSumState, MS, States){
-////        var sumState = '';
-////        //if Tescase state in this Milstone is 'TC not to Verify' look in previous Milestones.
-////        if (States[MS] == 'TC not to Verify' && MS == 'PVSState'){
-////            MS = 'PT2State';
-////        }
-////        else if (States[MS] == 'TC not to Verify' && MS == 'PT2State'){
-////            MS = 'PT1State';
-////        }
-////
-////        switch (States[MS])
-////        {
-////            case 'TC to Verify':
-////                if(oldSumState == 'PosTested'){
-////                //if posTested and new untested goto PartTested
-////                    sumState = 'PartTested';
-////                }//if PartTested and new Untested stay at Parttested
-////                else if(oldSumState == 'PartTested'){
-////                    sumState = 'PartTested';
-////                }//if RestTested and new Untested goto PartTestWithRest
-////                else if(oldSumState == 'RestTested'){
-////                    sumState = 'PartTestWithRest';
-////                }//if PartTestWithRest stay at PartTestWithRest
-////                else if(oldSumState == 'PartTestWithRest'){
-////                    sumState = 'PartTestWithRest';
-////                }
-////                else {
-////                    sumState = 'UnTested';
-////                }
-////            break;
-////            case 'TC Completed with Restriction':
-////                if(oldSumState == 'UnTested'){
-////                    sumState = 'PartTestWithRest';
-////                }//if UnTested goto PartTestWithRest
-////                else {
-////                    sumState = 'RestTested';
-////                }
-////            break;
-////            case 'TC Completed':
-////                //in case only one TC attached and positive
-////                if (oldSumState == '' || oldSumState == 'noRelevantTC') {
-////                    sumState = 'PosTested';
-////                }
-////            break;
-////            case 'TC Failed':
-////                sumState = 'NegTested';
-////            break;
-////            case 'TC not to Verify':
-////                //if Milestone is MS2 and TC is 'TC not to Verify'
-////            case ' ':
-////            default:
-////                // if Test Case State for this Release is empty
-////                // it is not relevant for this Release
-////                // also no other States are considered
-////                if (oldSumState == '' || oldSumState == 'noRelevantTC' ){
-////                    sumState = 'noRelevantTC';
-////                } else {
-////                    sumState = oldSumState;
-////                }
-////            break;
-////        }
-////        return sumState;
-////    }
-
-// ---------------------------------------------------------------------//
-// calculate Testing State from linked Test Cases PT1/PT2/PVS States
-// ---------------------------------------------------------------------//
-////    function handleAttachedTCState(ReqMS,ReqTCStatesSum){
-////        //sum States: TCmissing, UnTested, NegTested, RestTested, //
-////        //            PartTested, PartTestWithRest, PosTested, notRelevant//
-////        var PTsumState = '';
-////        var slicedReqMS = ReqMS.substring(0,3);
-////
-////        for (var i = 0; i < ReqTCStatesSum.length; i++) {
-////
-////            switch (slicedReqMS)
-////                {
-////                    case 'MS2':
-////                        PTsumState = handleTCPTState(PTsumState, 'PT1State', ReqTCStatesSum[i]);
-////                    break;
-////                    case 'MS3':
-////                        PTsumState = handleTCPTState(PTsumState, 'PT2State', ReqTCStatesSum[i]);
-////                    break;
-////                    case 'MS4':
-////                        PTsumState = handleTCPTState(PTsumState, 'PVSState', ReqTCStatesSum[i]);
-////                    break;
-////                    default:
-////                    break;
-////                }
-////        }
-////        return PTsumState;
-////    }
-
-// ---------------------------------------------------------------------//
-// combine PT States and TC State to one TestState for the Requirement
-// ---------------------------------------------------------------------//
-////    function combineTestStates(TCState,PTState){
-////        var combinedState = '';
-////        if (PTState == 'noRelevantTC'){
-////            combinedState = TCState;
-////        } else {
-////            combinedState = PTState;
-////        }
-////        return combinedState;
-////    }
-
-// ---------------------------------------------------------------------//
-// combine PT States and TC State to one TestState for the Requirement
-// ---------------------------------------------------------------------//
+    // ---------------------------------------------------------------------//
+    // combine PT States and TC State to one TestState for the Requirement
+    // ---------------------------------------------------------------------//
     function combinePTTestStates(TestState,PTState){
         for (var key in PTState){
             if (PTState.hasOwnProperty(key) && PTState[key] == 'notRelevant') {
@@ -400,9 +291,9 @@ function main(){
         return PTState;
     }
 
-// ---------------------------------------------------------------------//
-//count PT Planing States
-// ---------------------------------------------------------------------//
+    // ---------------------------------------------------------------------//
+    //count PT Planing States
+    // ---------------------------------------------------------------------//
     function CountPTPlanningState(ReqMS,PTSum){
         var slicedReqMS = ReqMS.substring(0,3);
 
@@ -434,9 +325,9 @@ function main(){
     }
 
 
-// ---------------------------------------------------------------------//
-// reduce Array
-// ---------------------------------------------------------------------//
+    // ---------------------------------------------------------------------//
+    // reduce Array
+    // ---------------------------------------------------------------------//
     function reduceArray(removefromArray, deleterArray, removeIfNOTInDeleterArray){
         if(typeof removefromArray == 'undefined'){
             removefromArray = [];
@@ -460,9 +351,9 @@ function main(){
     }
 
 
-// ---------------------------------------------------------------------//
-// String to Array
-// ---------------------------------------------------------------------//
+    // ---------------------------------------------------------------------//
+    // String to Array
+    // ---------------------------------------------------------------------//
     function stringtoArray(String,Separator){
         if(String !== '' && String !== null && String !== '\xa0'){ //\xa0 == &nbsp;
             //Split String if there is more than one entry: separated by: Separator
@@ -484,9 +375,9 @@ function main(){
             return Array;
         }
 
-// ---------------------------------------------------------------------//
-// calculte Testing State for a Reqirement from linked Test Cases PT Test States
-// ---------------------------------------------------------------------//
+    // ---------------------------------------------------------------------//
+    // calculte Testing State for a Reqirement from linked Test Cases PT Test States
+    // ---------------------------------------------------------------------//
     function handleTCPTStates(ReqMS, SOWTPFstring, TCdata){
         //selectedTestPlatforms
         var sumState = 'notRelevant';
@@ -504,12 +395,11 @@ function main(){
         for (var i = 0; i < TCdata.length; i++) {
             collectedTCTPFs = addtoArray(collectedTCTPFs, TCdata[i].TestPF);
         }
-
         //reduce Array by items from TPF selection from the menu
         var redbySelction = reduceArray(collectedTCTPFs, selectedTestPlatforms,true);
-
         //how many Testplatforms from SOW are not covered by Testplatforms from Testcase
         var TPFsleft = reduceArray(SOWTPFs,redbySelction,false);
+
 
         //choose PT Generations to analyse, concerning the Requirement Milestone
         switch (slicedReqMS)
@@ -564,7 +454,7 @@ function main(){
                     PTState = TCdata[i][PTGens[j-2]];
                     }
                 }
-                //console.log(PTState)
+
                 switch (PTState)
                 { //PosTested, PartTested, PartTestWithRest, UnTested, NegTested, TCmissing, notRelevant
                     case 'TC to Verify':
@@ -661,9 +551,9 @@ function main(){
         return PTsumStates;
     }
 
-// ---------------------------------------------------------------------//
-//coun Values and store in SumObject
-// ---------------------------------------------------------------------//
+    // ---------------------------------------------------------------------//
+    //coun Values and store in SumObject
+    // ---------------------------------------------------------------------//
     function countValue(Value, SumObject){
           retCode = 'false';
           if(Value !== '' && Value !== null && Value !== '\xa0'){ //\xa0 == &nbsp;
@@ -688,32 +578,28 @@ function main(){
     // ---------------------------------------------------------------------//
     //Generate Department Overview
     // ---------------------------------------------------------------------//
-        function DepOverview(TestPF, SumObject){
-              retCode = 'false';
-              if(TestPF !== '' && TestPF !== null && TestPF !== '\xa0'){ //\xa0 == &nbsp;
-                  //Split PFString if there is more than one TestPlatform: separated by: ,
-                  var splitPFString = TestPF.split(',');
-                  for (var i = 0; i < splitPFString.length; i++) {
-                      var cutPFString = splitPFString[i].split('-');
-                      DepartmentString = cutPFString[0].trim();
-
-                      if (DepartmentString in SumObject)
-                      {
-                          SumObject[DepartmentString]++;
-                      }
-                      else
-                      {
-                          SumObject[DepartmentString] = 1;
-                      }
+    function DepOverview(TestPF, SumObject){
+          retCode = 'false';
+          if(TestPF !== '' && TestPF !== null && TestPF !== '\xa0'){ //\xa0 == &nbsp;
+              //Split PFString if there is more than one TestPlatform: separated by: ,
+              var splitPFString = TestPF.split(',');
+              for (var i = 0; i < splitPFString.length; i++) {
+                  var cutPFString = splitPFString[i].split('-');
+                  DepartmentString = cutPFString[0].trim();
+                  if (DepartmentString in SumObject) {
+                      SumObject[DepartmentString]++;
+                  }
+                  else {
+                      SumObject[DepartmentString] = 1;
                   }
               }
-              return SumObject;
-        }
+          }
+          return SumObject;
+    }
 
-// ---------------------------------------------------------------------//
-// Main Routine: parse HTML trou tbody > tr
-// ---------------------------------------------------------------------//
-
+    // ---------------------------------------------------------------------//
+    // Main Routine: parse HTML trou tbody > tr
+    // ---------------------------------------------------------------------//
     $('tbody tr').each(function() {
         var Type = $(this).find('td.Type').text();
         var Milestone = $(this).find('td.Milestone').text();
@@ -739,23 +625,12 @@ function main(){
 
                     //calculate SOW Test Status from TC Test State
                     activeReqTestState = handleActiveReqTestState(TCStateSum);
-                    //activeReqPTTestState = handleAttachedTCState(ReqMilestone,PTTCStateSum);
-                    //combinedTestState = combineTestStates(activeReqTestState,activeReqPTTestState);
                     CountPlanningState(ReqMilestone,activeReqTestState);
-                    // ---------------------------------------------------------------------//
 
                     //calculate SOW Test Status from PT gen Test States
                     var PTSumState = handleTCPTStates(ReqMilestone, SOWAffectedTestPlatforms, allTCdata);
-                    //var combinedPTTestStates = combinePTTestStates(activeReqTestState, PTSumState);
-                    //CountPTPlanningState(ReqMilestone,PTSumState);
-                    // ---------------------------------------------------------------------//
-
-                    //try to combine the calculation for PT Test State and TC Test State in one function
-                    //handleTestStates(ReqMilestone,allTCdata);
-                    // ---------------------------------------------------------------------//
 
                     DepartmentOverview = DepOverview(SOWAffectedTestPlatforms, DepartmentOverview);
-
                     OverviewTable.push([SOW_id, SOWSubject, ReqMilestone, SOWSIL, activeReqTestState, PTSumState.PT1State , PTSumState.PT2State, PTSumState.PVSState,SOWAffectedTestPlatforms]);
 
                     //console.log('TC State:', activeReqTestState, '| PT State:',PTSumState );
@@ -780,8 +655,8 @@ function main(){
                     ReqMilestone = Milestone;
                     SOWReqCount++;
                     SOWSIL = SILLevelofReq;
-//                    console.log('SOWID:', SOW_id, 'SOW State:', State, 'Planned for:', Milestone);
-//                    console.log('-------------------------------------------------------------------');
+                    //console.log('SOWID:', SOW_id, 'SOW State:', State, 'Planned for:', Milestone);
+                    //console.log('-------------------------------------------------------------------');
                 }
                 else if (Type == 'Test Case'){
                     var TCID = this.getElementsByClassName('ID')[1].childNodes[0].nodeValue;
@@ -821,22 +696,21 @@ function main(){
         }
     });
 
-// ---------------------------------------------------------------------//
-// general Calculations
-// ---------------------------------------------------------------------//
-
+    // ---------------------------------------------------------------------//
+    // general Calculations
+    // ---------------------------------------------------------------------//
     var posSOWTestCoverage = MS2StatusMask.PosTested + MS2StatusMask.RestTested + MS3StatusMask.PosTested + MS3StatusMask.RestTested + MS4StatusMask.PosTested + MS4StatusMask.RestTested;
     createTable(OverviewTable);
-    //console.log(DepartmentOverview)
-// ---------------------------------------------------------------------//
-// Print google Charts
-// ---------------------------------------------------------------------//
 
-// ---------------------------------------------------------------------//
-// Pie Charts
-// ---------------------------------------------------------------------//
-// Coverage Chart
-// ---------------------------------------------------------------------//
+
+    // ---------------------------------------------------------------------//
+    // Print google Charts
+    // ---------------------------------------------------------------------//
+    // ---------------------------------------------------------------------//
+    // Pie Charts
+    // ---------------------------------------------------------------------//
+    // Coverage Chart
+    // ---------------------------------------------------------------------//
     google.charts.setOnLoadCallback(drawSOWCoverageChart);
     function drawSOWCoverageChart(){
 
@@ -931,21 +805,18 @@ function main(){
 //        var chart = new google.visualization.ColumnChart(document.getElementById('MilestoneChart'));
 //        chart.draw(view, options);
 //    }
-// ---------------------------------------------------------------------//
-//  Department Overview
-// ---------------------------------------------------------------------//
+    // ---------------------------------------------------------------------//
+    //  Department Overview
+    // ---------------------------------------------------------------------//
     google.charts.setOnLoadCallback(drawDepartmentChart);
     function drawDepartmentChart(){
         var data = new google.visualization.DataTable()
         data.addColumn('string', 'Dep');
         data.addColumn('number', 'count');
         var testarray = [];
-//        data.addRows(DepartmentOverview.length)
+
         for (var key in DepartmentOverview) {
             testarray.push([key, DepartmentOverview[key]]);
-//            console.log(testarray)
-            //data.addRow([key, DepartmentOverview[key]]);
-//            console.log(data);
         }
         data.addRows(testarray);
 
@@ -970,15 +841,15 @@ function main(){
         chart.draw(view, options);
     }
 
-// ---------------------------------------------------------------------//
-//  Test Coverage over Milestones Chart
-// ---------------------------------------------------------------------//
+    // ---------------------------------------------------------------------//
+    //  Test Coverage over Milestones Chart
+    // ---------------------------------------------------------------------//
     google.charts.setOnLoadCallback(drawTestCoverage);
     function drawTestCoverage(){
 
         var data = [
             ['Release', 'Test Case missing', 'negative tested', 'untested', 'partially tested','tested with restrictions','part tested with restrictions', 'positive tested'],
-//            ['All', AllStatusMask.TCmissing,AllStatusMask.NegTested,AllStatusMask.UnTested,AllStatusMask.RestTested,AllStatusMask.PartTestWithRest,AllStatusMask.PartTested,AllStatusMask.PosTested],
+            //['All', AllStatusMask.TCmissing,AllStatusMask.NegTested,AllStatusMask.UnTested,AllStatusMask.RestTested,AllStatusMask.PartTestWithRest,AllStatusMask.PartTested,AllStatusMask.PosTested],
             ['SR2', MS2StatusMask.TCmissing,MS2StatusMask.NegTested,MS2StatusMask.UnTested,MS2StatusMask.RestTested,MS2StatusMask.PartTestWithRest,MS2StatusMask.PartTested,MS2StatusMask.PosTested],
             ['SR3', MS3StatusMask.TCmissing,MS3StatusMask.NegTested,MS3StatusMask.UnTested,MS3StatusMask.RestTested,MS3StatusMask.PartTestWithRest,MS3StatusMask.PartTested,MS3StatusMask.PosTested],
             ['SR4', MS4StatusMask.TCmissing,MS4StatusMask.NegTested,MS4StatusMask.UnTested,MS4StatusMask.RestTested,MS4StatusMask.PartTestWithRest,MS4StatusMask.PartTested,MS4StatusMask.PosTested]
@@ -1051,18 +922,12 @@ function main(){
         }
     }
 
-// ---------------------------------------------------------------------//
-//  Test Coverage over Milestones Chart
-// ---------------------------------------------------------------------//
+    // ---------------------------------------------------------------------//
+    //  Test Coverage over Milestones Chart
+    // ---------------------------------------------------------------------//
     google.charts.setOnLoadCallback(drawPTCoverage);
     function drawPTCoverage(){
 
-//        var data = google.visualization.arrayToDataTable([
-//            ['Release', 'Test Case missing', 'negative tested', 'untested', 'partially tested','tested with restrictions','part tested with restrictions', 'positive tested'],
-//            ['SR2', MS2PTStatusMask.TCmissing,MS2PTStatusMask.NegTested,MS2PTStatusMask.UnTested,MS2PTStatusMask.RestTested,MS2PTStatusMask.PartTestWithRest,MS2PTStatusMask.PartTested,MS2PTStatusMask.PosTested],
-//            ['SR3', MS3PTStatusMask.TCmissing,MS3PTStatusMask.NegTested,MS3PTStatusMask.UnTested,MS3PTStatusMask.RestTested,MS3PTStatusMask.PartTestWithRest,MS3PTStatusMask.PartTested,MS3PTStatusMask.PosTested],
-//            ['SR4', MS4PTStatusMask.TCmissing,MS4PTStatusMask.NegTested,MS4PTStatusMask.UnTested,MS4PTStatusMask.RestTested,MS4PTStatusMask.PartTestWithRest,MS4PTStatusMask.PartTested,MS4PTStatusMask.PosTested],
-//        ]);
         var data = [
             ['Release', 'Test Case missing', 'negative tested', 'untested', 'partially tested','tested with restrictions','part tested with restrictions', 'positive tested'],
             ['SR2', MS2PTStatusMask.TCmissing,MS2PTStatusMask.NegTested,MS2PTStatusMask.UnTested,MS2PTStatusMask.RestTested,MS2PTStatusMask.PartTestWithRest,MS2PTStatusMask.PartTested,MS2PTStatusMask.PosTested],
