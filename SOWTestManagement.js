@@ -73,13 +73,11 @@ function main(){
     var activeReqTestState = '';
     var activeReqPTTestState = '';
     var ReqMilestone = '';
-    var PFTCCount = 0;
-    var activeTC = 'false';
-    var activeReq = 'false';
-    var SOW_id = 0;
+    var activeTC = false;
+    var activeReq = false;
+    var SOWid = 0;
     var SOWAffectedTestPlatforms = '';
     var ProjTCTestPlatform = '';
-    var PFTCTestPlatform = '';
     var AllStatusMask = {TCmissing:0,UnTested:0,NegTested:0,RestTested:0,PartTested:0,PartTestWithRest:0,PosTested:0};
     var MS2StatusMask = {TCmissing:0,UnTested:0,NegTested:0,RestTested:0,PartTested:0,PartTestWithRest:0,PosTested:0};
     var MS3StatusMask = {TCmissing:0,UnTested:0,NegTested:0,RestTested:0,PartTested:0,PartTestWithRest:0,PosTested:0};
@@ -102,7 +100,7 @@ function main(){
     var DepartmentOverview = {};
 
     // ---------------------------------------------------------------------//
-    // add Table
+    // create Table
     // ---------------------------------------------------------------------//
     function createTable(tableData) {
         var headingData = ['ID', 'Subject', 'Milestone', 'SIL', 'Test State', 'SR2 Test State', 'SR3 Test State', 'SR4 Test State','Test Platforms'];
@@ -145,15 +143,7 @@ function main(){
         table.appendChild(tableBody);
         //document.body.appendChild(table);
         document.getElementById("TableContainer").appendChild(table);
-
     }
-
-
-    // ---------------------------------------------------------------------//
-    // Count general Values over the whole HTML Data
-    // ---------------------------------------------------------------------//
-
-
     // ---------------------------------------------------------------------//
     // check if String is equal to selection
     // ---------------------------------------------------------------------//
@@ -169,7 +159,6 @@ function main(){
         }
         return retCode;
     }
-
     // ---------------------------------------------------------------------//
     // check if SILString is equal to selection
     // ---------------------------------------------------------------------//
@@ -188,7 +177,97 @@ function main(){
         }
         return retCode;
     }
-
+    // ---------------------------------------------------------------------//
+    // reduce Array
+    // ---------------------------------------------------------------------//
+    function reduceArray(removefromArray, deleterArray, removeIfNOTInDeleterArray){
+        if(typeof removefromArray == 'undefined'){
+            removefromArray = [];
+        }
+        else if (removeIfNOTInDeleterArray == false) {
+            for (var j in deleterArray){
+                if(removefromArray.indexOf(deleterArray[j]) > -1){
+                    var pos = removefromArray.indexOf(deleterArray[j]);
+                    removefromArray.splice(pos,1);
+                }
+            }
+        }
+        else if (removeIfNOTInDeleterArray == true){
+            for (var i in removefromArray){
+                if (deleterArray.indexOf(removefromArray[i]) == -1 ){
+                    removefromArray.splice(i,1);
+                }
+            }
+        }
+        return removefromArray;
+    }
+    // ---------------------------------------------------------------------//
+    // String to Array
+    // ---------------------------------------------------------------------//
+    function stringtoArray(String,Separator){
+        if(String !== '' && String !== null && String !== '\xa0'){ //\xa0 == &nbsp;
+            //Split String if there is more than one entry: separated by: Separator
+            var Array = String.split(Separator);
+            for (var i = 0; i < Array.length; i++) {
+                Array[i] = Array[i].trim();
+            }
+        }
+        return Array;
+    }
+    // ---------------------------------------------------------------------//
+    // Add  to Array if new
+    // ---------------------------------------------------------------------//
+    function addtoArray(Array,Value){
+        if(Array.indexOf(Value) == -1){
+            Array.push(Value);
+        }
+        return Array;
+    }
+    // ---------------------------------------------------------------------//
+    //count Values and store in SumObject
+    // ---------------------------------------------------------------------//
+    function countValue(Value, SumObject){
+          retCode = 'false';
+          if(Value !== '' && Value !== null && Value !== '\xa0'){ //\xa0 == &nbsp;
+              //Split PFString if there is more than one TestPlatform: separated by: ,
+              var splitString = Value.split(',');
+              for (var i = 0; i < splitString.length; i++) {
+                  var trimmedString = splitString[i].trim();
+                  if (trimmedString in SumObject)
+                  {
+                      SumObject[trimmedString]++;
+                  }
+                  else
+                  {
+                      SumObject[trimmedString] = 1;
+                  }
+              }
+          }
+          return SumObject;
+    }
+    // ---------------------------------------------------------------------//
+    //Generate Department Overview
+    // ---------------------------------------------------------------------//
+    function CountDepStrings(TestPF, SumObject){
+          retCode = 'false';
+          if(TestPF !== '' && TestPF !== null && TestPF !== '\xa0'){ //\xa0 == &nbsp;
+              //Split PFString if there is more than one TestPlatform: separated by: ,
+              var splitPFString = TestPF.split(',');
+              for (var i = 0; i < splitPFString.length; i++) {
+                  var cutPFString = splitPFString[i].split('-');
+                  DepartmentString = cutPFString[0].trim();
+                  if (DepartmentString in SumObject) {
+                      SumObject[DepartmentString]++;
+                  }
+                  else {
+                      SumObject[DepartmentString] = 1;
+                  }
+              }
+          }
+          return SumObject;
+    }
+    // ---------------------------------------------------------------------//
+    // Handling Test States
     // ---------------------------------------------------------------------//
     // Count Requirement Test States per Mielestone
     // ---------------------------------------------------------------------//
@@ -278,21 +357,10 @@ function main(){
         }
         return sumState;
     }
-
     // ---------------------------------------------------------------------//
-    // combine PT States and TC State to one TestState for the Requirement
+    // Handling PTStates
     // ---------------------------------------------------------------------//
-    function combinePTTestStates(TestState,PTState){
-        for (var key in PTState){
-            if (PTState.hasOwnProperty(key) && PTState[key] == 'notRelevant') {
-                    PTState[key] = TestState;
-            }
-        }
-        return PTState;
-    }
-
-    // ---------------------------------------------------------------------//
-    //count PT Planing States
+    // count PT Planing States
     // ---------------------------------------------------------------------//
     function CountPTPlanningState(ReqMS,PTSum){
         var slicedReqMS = ReqMS.substring(0,3);
@@ -323,58 +391,6 @@ function main(){
             MS4PTStatusMask[PTSum['PVSState']]++;
         }
     }
-
-
-    // ---------------------------------------------------------------------//
-    // reduce Array
-    // ---------------------------------------------------------------------//
-    function reduceArray(removefromArray, deleterArray, removeIfNOTInDeleterArray){
-        if(typeof removefromArray == 'undefined'){
-            removefromArray = [];
-        }
-        else if (removeIfNOTInDeleterArray == false) {
-            for (var j in deleterArray){
-                if(removefromArray.indexOf(deleterArray[j]) > -1){
-                    var pos = removefromArray.indexOf(deleterArray[j]);
-                    removefromArray.splice(pos,1);
-                }
-            }
-        }
-        else if (removeIfNOTInDeleterArray == true){
-            for (var i in removefromArray){
-                if (deleterArray.indexOf(removefromArray[i]) == -1 ){
-                    removefromArray.splice(i,1);
-                }
-            }
-        }
-        return removefromArray;
-    }
-
-
-    // ---------------------------------------------------------------------//
-    // String to Array
-    // ---------------------------------------------------------------------//
-    function stringtoArray(String,Separator){
-        if(String !== '' && String !== null && String !== '\xa0'){ //\xa0 == &nbsp;
-            //Split String if there is more than one entry: separated by: Separator
-            var Array = String.split(Separator);
-            for (var i = 0; i < Array.length; i++) {
-                Array[i] = Array[i].trim();
-            }
-        }
-        return Array;
-    }
-
-    // ---------------------------------------------------------------------//
-    // Add  to Array if new
-    // ---------------------------------------------------------------------//
-        function addtoArray(Array,Value){
-            if(Array.indexOf(Value) == -1){
-                Array.push(Value);
-            }
-            return Array;
-        }
-
     // ---------------------------------------------------------------------//
     // calculte Testing State for a Reqirement from linked Test Cases PT Test States
     // ---------------------------------------------------------------------//
@@ -551,51 +567,6 @@ function main(){
         return PTsumStates;
     }
 
-    // ---------------------------------------------------------------------//
-    //coun Values and store in SumObject
-    // ---------------------------------------------------------------------//
-    function countValue(Value, SumObject){
-          retCode = 'false';
-          if(Value !== '' && Value !== null && Value !== '\xa0'){ //\xa0 == &nbsp;
-              //Split PFString if there is more than one TestPlatform: separated by: ,
-              var splitString = Value.split(',');
-              for (var i = 0; i < splitString.length; i++) {
-                  var trimmedString = splitString[i].trim();
-
-                  if (trimmedString in SumObject)
-                  {
-                      SumObject[trimmedString]++;
-                  }
-                  else
-                  {
-                      SumObject[trimmedString] = 1;
-                  }
-              }
-          }
-          return SumObject;
-    }
-
-    // ---------------------------------------------------------------------//
-    //Generate Department Overview
-    // ---------------------------------------------------------------------//
-    function DepOverview(TestPF, SumObject){
-          retCode = 'false';
-          if(TestPF !== '' && TestPF !== null && TestPF !== '\xa0'){ //\xa0 == &nbsp;
-              //Split PFString if there is more than one TestPlatform: separated by: ,
-              var splitPFString = TestPF.split(',');
-              for (var i = 0; i < splitPFString.length; i++) {
-                  var cutPFString = splitPFString[i].split('-');
-                  DepartmentString = cutPFString[0].trim();
-                  if (DepartmentString in SumObject) {
-                      SumObject[DepartmentString]++;
-                  }
-                  else {
-                      SumObject[DepartmentString] = 1;
-                  }
-              }
-          }
-          return SumObject;
-    }
 
     // ---------------------------------------------------------------------//
     // Main Routine: parse HTML trou tbody > tr
@@ -614,14 +585,18 @@ function main(){
         switch($(this).attr('class'))
         {
             case 'sow_header':
-                if (activeReq == 'true' && activeTC == 'false'){
+                if (activeReq  && !activeTC){
                     CountPlanningState(ReqMilestone,'TCmissing');
                     CountPTPlanningState(ReqMilestone,'TCmissing');
-//                    console.log('Sum State: TCmissing');
-//                    console.log('-------------------------------------------------------------------');
+                    //console.log('Sum State: TCmissing');
+                    //console.log('-------------------------------------------------------------------');
+
+                    //generate DepartmentOverview
+                    DepartmentOverview = CountDepStrings(SOWAffectedTestPlatforms, DepartmentOverview);
+                    OverviewTable.push([SOWid, SOWSubject, ReqMilestone, SOWSIL, activeReqTestState, '' , '', '',SOWAffectedTestPlatforms]);
                 }
-                else if (activeReq == 'true' && activeTC == 'true'){
-                    //console.log('SOWTPF:', SOWAffectedTestPlatforms,' ProjTC:',ProjTCTestPlatform,' PFTC:',PFTCTestPlatform);
+                else if (activeReq && activeTC){
+                    //console.log('SOWTPF:', SOWAffectedTestPlatforms,' ProjTC:',ProjTCTestPlatform,');
 
                     //calculate SOW Test Status from TC Test State
                     activeReqTestState = handleActiveReqTestState(TCStateSum);
@@ -630,66 +605,56 @@ function main(){
                     //calculate SOW Test Status from PT gen Test States
                     var PTSumState = handleTCPTStates(ReqMilestone, SOWAffectedTestPlatforms, allTCdata);
 
-                    DepartmentOverview = DepOverview(SOWAffectedTestPlatforms, DepartmentOverview);
-                    OverviewTable.push([SOW_id, SOWSubject, ReqMilestone, SOWSIL, activeReqTestState, PTSumState.PT1State , PTSumState.PT2State, PTSumState.PVSState,SOWAffectedTestPlatforms]);
-
+                    //generate DepartmentOverview
+                    DepartmentOverview = CountDepStrings(SOWAffectedTestPlatforms, DepartmentOverview);
+                    OverviewTable.push([SOWid, SOWSubject, ReqMilestone, SOWSIL, activeReqTestState, PTSumState.PT1State , PTSumState.PT2State, PTSumState.PVSState,SOWAffectedTestPlatforms]);
                     //console.log('TC State:', activeReqTestState, '| PT State:',PTSumState );
-                    //console.log('PT State:',PTSumState );
                     //console.log('-------------------------------------------------------------------');
                 }
                 //resetting for new Requirement
                 PTSumState = [];
-                activeReq = 'false';
-                activeTC ='false';
+                activeReq = false;
+                activeTC = false ;
                 TCStateSum = [];
                 allTCdata = [];
             break;
 
             case 'sow':
-                var State = this.getElementsByClassName('State')[0].childNodes[0].nodeValue;
                 if(Type == 'SOW Requirement' && validTPF == 'valid' && useSILReq == 'true') {
-                    activeReq = 'true';
-                    SOW_id = this.getElementsByClassName('ID')[1].childNodes[0].nodeValue;
+                    activeReq = true;
+                    SOWid = this.getElementsByClassName('ID')[1].childNodes[0].nodeValue;
                     SOWAffectedTestPlatforms = this.getElementsByClassName('Affected')[0].childNodes[0].nodeValue;
                     SOWSubject = this.getElementsByClassName('Subject')[0].childNodes[0].nodeValue;
                     ReqMilestone = Milestone;
                     SOWReqCount++;
                     SOWSIL = SILLevelofReq;
-                    //console.log('SOWID:', SOW_id, 'SOW State:', State, 'Planned for:', Milestone);
+                    //var SOWState = this.getElementsByClassName('State')[0].childNodes[0].nodeValue;
+                    //console.log('SOWID:', SOWid, 'SOW State:', SOWState, 'Planned for:', Milestone);
                     //console.log('-------------------------------------------------------------------');
                 }
                 else if (Type == 'Test Case'){
-                    var TCID = this.getElementsByClassName('ID')[1].childNodes[0].nodeValue;
+                    var TCid = this.getElementsByClassName('ID')[1].childNodes[0].nodeValue;
                     ProjTCTestPlatform = this.getElementsByClassName('Platform')[0].childNodes[0].nodeValue;
-                    //console.log('TCID:', TCID);
+                    //console.log('TCid:', TCid);
                 }
             break;
 
             case 'test_case':
-                var State = this.getElementsByClassName('State')[0].childNodes[0].nodeValue;
-                var pltfm_tc_id = this.getElementsByClassName('ID')[0].childNodes[0].nodeValue;
+                var TCid = this.getElementsByClassName('ID')[0].childNodes[0].nodeValue;
                 var PTTCStates = {PT1State:'',PT2State:'',PVSState:''};
-                PFTCTestPlatform = this.getElementsByClassName('Platform')[0].childNodes[0].nodeValue;
-                if (activeReq == 'true') {
-                    PFTCCount++;
-                }
-                activeTC = 'true';
-                TCStateSum.push(State);
-                PTTCStates.PT1State = PT1State;
-                PTTCStates.PT2State = PT2State;
-                PTTCStates.PVSState = PVSState;
-                PTTCStateSum.push(PTTCStates);
 
-                TCdata.TCState = State;
+                TCdata.TCState = this.getElementsByClassName('State')[0].childNodes[0].nodeValue;
+                TCdata.TestPF = this.getElementsByClassName('Platform')[0].childNodes[0].nodeValue;
                 TCdata.PT1State = PT1State;
                 TCdata.PT2State = PT2State;
                 TCdata.PVSState = PVSState;
-                TCdata.TestPF = PFTCTestPlatform;
+
+                TCStateSum.push(TCdata.TCState);
                 allTCdata.push(TCdata);
 
-                //console.log('TCID:', pltfm_tc_id, '| TC State:',State,'|, PT1:',PT1State,'| PT2:',PT2State,'| PVS:',PVSState);
-                //console.log('TCID:', pltfm_tc_id, '| TC State:',TCdata.TCState,'|, PT1:',TCdata.PT1State,'| PT2:',TCdata.PT2State,'| PVS:',TCdata.PVSState);
-
+                activeTC = true;
+                //console.log('TCid:', TCid, '| TC State:',State,'|, PT1:',PT1State,'| PT2:',PT2State,'| PVS:',PVSState);
+                //console.log('TCid:', TCid, '| TC State:',TCdata.TCState,'|, PT1:',TCdata.PT1State,'| PT2:',TCdata.PT2State,'| PVS:',TCdata.PVSState);
             break;
             default:
             break;
@@ -858,7 +823,7 @@ function main(){
         var metrics = ["SOWs"];
 
         var options = {
-            title: 'Planned SOWs with Test State',
+            title: 'Test States over Milestones',
             width: 1000,
             height: 400,
             legend: { position: 'right', alignment: 'center', maxLines: 3 },
@@ -939,7 +904,7 @@ function main(){
         var metrics = ["SOWs"];
 
         var options = {
-            title: 'SOWs Test Status for PT Generations',
+            title: 'PT Test States over Milestones',
             width: 1000,
             height: 400,
             legend: { position: 'right', alignment: 'center', maxLines: 6 },
