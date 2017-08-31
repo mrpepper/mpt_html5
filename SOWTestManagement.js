@@ -922,36 +922,51 @@ function main(){
         for (var i = 0; i < data[0].length; i++) {
             intergerFormatter.format(dataTable, i);
         }
-
+        var colors = ['#66cc33','#3366CC','#DC3912','#FF9900','#DD4477','#994499','#0099C6','#109618'];
+        //var colors = ["yellow",'black', 'blue', 'red', 'green', 'yellow', 'gray'];
         var view = new google.visualization.DataView(dataTable);
         var cols = [0];
-        for (var i = 1; i < data[0].length; i++) {
-            cols.push({
-                sourceColumn: i,
-                type: "number",
-                label: data[0][i]
-            });
-            cols.push({
-                calc: "stringify",
-                sourceColumn: i,
-                type: "string",
-                role: "annotation"
-            });
-            cols.push({
-                calc: createTooltip(i),
-                /*(function(i) {
-                      return function(dataTable, row){
-                        return "Url count" + dataTable.getValue(row, i)+"</b>";
-                    };
-                 })(i),*/
-                type: "string",
-                role: "tooltip",
-                p: { html: true }
-            });
+
+            var ccount = 0;
+            for (var i = 1; i < data[0].length; i++) {
+                cols.push({
+                    sourceColumn: i,
+                    type: "number",
+                    label: data[0][i]
+                });
+                cols.push({
+                    calc: "stringify",
+                    sourceColumn: i,
+                    type: "string",
+                    role: "annotation"
+                });
+                cols.push({
+                    sourceColumn: i,
+                    calc: function () {
+                        ccount++;
+                        return colors[ccount];
+                        //return "yellow";
+                    },
+                    role: "style",
+                    type: "string"
+                });
+                cols.push({
+                    calc: createTooltip(i),
+                    type: "string",
+                    role: "tooltip",
+                    p: { html: true }
+                });
+
         }
         view.setColumns(cols);
         var chart = new google.visualization.ColumnChart(document.getElementById('PTCoverage'));
         chart.draw(view, options);
+
+        function getBarcolor(col){
+            var color = colors[col];
+            return color;
+        }
+
 
         function createTooltip(col) {
         return function(dataTable, row) {
