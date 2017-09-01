@@ -943,11 +943,6 @@ function main(){
             });
             cols.push({
                 calc: createTooltip(i),
-                /*(function(i) {
-                      return function(dataTable, row){
-                        return "Url count" + dataTable.getValue(row, i)+"</b>";
-                    };
-                 })(i),*/
                 type: "string",
                 role: "tooltip",
                 p: { html: true }
