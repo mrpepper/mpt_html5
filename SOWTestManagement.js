@@ -414,7 +414,7 @@ function main(){
         //reduce Array by items from TPF selection from the menu
         var redbySelction = reduceArray(collectedTCTPFs, selectedTestPlatforms,true);
         //how many Testplatforms from SOW are not covered by Testplatforms from Testcase
-        var TPFsleft = reduceArray(SOWTPFs,redbySelction,false);
+        var TPFsleft = reduceArray(redbySelction,SOWTPFs,false);
 
 
         //choose PT Generations to analyse, concerning the Requirement Milestone
@@ -629,7 +629,7 @@ function main(){
                     SOWReqCount++;
                     SOWSIL = SILLevelofReq;
                     //var SOWState = this.getElementsByClassName('State')[0].childNodes[0].nodeValue;
-                    //console.log('SOWID:', SOWid, 'SOW State:', SOWState, 'Planned for:', Milestone);
+                    //console.log('SOWID:', SOWid, 'Planned for:', ReqMilestone, 'AffectedTPFs:', SOWAffectedTestPlatforms);
                     //console.log('-------------------------------------------------------------------');
                 }
                 else if (Type == 'Test Case'){
@@ -641,20 +641,24 @@ function main(){
 
             case 'test_case':
                 var TCid = this.getElementsByClassName('ID')[0].childNodes[0].nodeValue;
+                var TestPlatformOfTC = $(this).find('td.Platform').text(); //Affected Test Platforms
                 var PTTCStates = {PT1State:'',PT2State:'',PVSState:''};
 
                 TCdata.TCState = this.getElementsByClassName('State')[0].childNodes[0].nodeValue;
                 TCdata.TestPF = this.getElementsByClassName('Platform')[0].childNodes[0].nodeValue;
+
                 TCdata.PT1State = PT1State;
                 TCdata.PT2State = PT2State;
                 TCdata.PVSState = PVSState;
 
                 TCStateSum.push(TCdata.TCState);
                 allTCdata.push(TCdata);
-
+                //if (activeReq == true){
+                //    console.log('|TPF:', TestPlatformOfTC, 'TCid:', TCid, '| TC State:',TCdata.TCState,'|, PT1:',TCdata.PT1State,'| PT2:',TCdata.PT2State,'| PVS:',TCdata.PVSState);
+                //}
+                TCdata = [];
                 activeTC = true;
-                //console.log('TCid:', TCid, '| TC State:',State,'|, PT1:',PT1State,'| PT2:',PT2State,'| PVS:',PVSState);
-                //console.log('TCid:', TCid, '| TC State:',TCdata.TCState,'|, PT1:',TCdata.PT1State,'| PT2:',TCdata.PT2State,'| PVS:',TCdata.PVSState);
+
             break;
             default:
             break;
