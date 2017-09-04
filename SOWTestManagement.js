@@ -1,19 +1,20 @@
 $(document).ready(function() {
     var availableTestPlatforms = [];
+    var availableVariants = [];
 
     // ---------------------------------------------------------------------//
-    // generate List of available Testplatforms from HTML Table
+    // generate List of Items
     // ---------------------------------------------------------------------//
-    function aquireTestPlatforms(PFString){
+    function aquireStrings(String,Array){
         retCode = 'false';
-        if(PFString !== '' && PFString !== null && PFString !== '\xa0'){ //\xa0 == &nbsp;
-            //Split PFString if there is more than one TestPlatform selected: separated by: ,
-            var splitPFString = PFString.split(',');
-            for (var i = 0; i < splitPFString.length; i++) {
-                var trimedPFString = splitPFString[i].trim();
-                if (($.inArray(trimedPFString,availableTestPlatforms)) == -1)
+        if(String !== '' && String !== null){ //\xa0 == &nbsp; -> old code: "&& String !== '\xa0'"
+            //Split String if there is more than one String: separated by: ,
+            var splitString = String.split(',');
+            for (var i = 0; i < splitString.length; i++) {
+                var trimedString = splitString[i].trim();
+                if (($.inArray(trimedString,Array)) == -1)
                 {
-                    availableTestPlatforms.push(trimedPFString);
+                    Array.push(trimedString);
                     retCode = 'added';
                 }
             }
@@ -22,38 +23,34 @@ $(document).ready(function() {
         }
 
     // ---------------------------------------------------------------------//
-    // append List of available Testplatforms to HTML selector
+    // append List of available Items to HTML selector
     // ---------------------------------------------------------------------//
-    function addTestPlatformsToSelector(){
-        //availableTestPlatforms.push('-All-');
-
-        for (var i = 0; i < availableTestPlatforms.length; i++) {
-            availableTestPlatforms.sort();
+    function addToSelector(Selector,Variants){
+        for (var i = 0; i < Variants.length; i++) {
+            Variants.sort();
             //append options to HTML selector for TestPlatforms
-            var sel = document.getElementById('selected_Test_Platforms');
+            var sel = document.getElementById(Selector);
             var opt = document.createElement('option');
-            opt.innerHTML = availableTestPlatforms[i];
-            opt.value = availableTestPlatforms[i];
+            opt.innerHTML = Variants[i];
+            opt.value = Variants[i];
             sel.appendChild(opt);
         }
-        //document.getElementById('selected_Test_Platforms').value = '-All-';
-        //test
-        //$.each(availableTestPlatforms, function(i,e){
-        //    $("#strings option[value='" + e + "']").prop("selected", true);
-        //});
-        //
     }
-
 
     // ---------------------------------------------------------------------//
     // find Affected TestPlatforms and add them to the selector
     // ---------------------------------------------------------------------//
     $('tbody tr').each(function() {
         var TestPlatform = $(this).find('td.Affected').text(); //Affected Test Platforms
-        aquireTestPlatforms(TestPlatform);
+        var Variants = $(this).find('td.Variant').text(); //Variants
+        aquireStrings(TestPlatform,availableTestPlatforms);
+        aquireStrings(Variants,availableVariants);
     });
-    addTestPlatformsToSelector();
+
+    addToSelector('selected_Test_Platforms', availableTestPlatforms);
     $("#selected_Test_Platforms").selectpicker('val', availableTestPlatforms);
+    addToSelector('selected_Variant', availableVariants);
+    $("#selected_Variant").selectpicker('val', availableVariants);
     main();
 
 });
@@ -77,6 +74,7 @@ function main(){
     var activeReq = false;
     var SOWid = 0;
     var SOWAffectedTestPlatforms = '';
+    var SOWVariant = '';
     var ProjTCTestPlatform = '';
     var AllStatusMask = {TCmissing:0,UnTested:0,NegTested:0,RestTested:0,PartTested:0,PartTestWithRest:0,PosTested:0};
     var MS2StatusMask = {TCmissing:0,UnTested:0,NegTested:0,RestTested:0,PartTested:0,PartTestWithRest:0,PosTested:0};
@@ -94,6 +92,7 @@ function main(){
     var allTestState = [];
     var selectedTestPlatforms = $( "#selected_Test_Platforms" ).val();
     var selectedSILrelevant = $( "#selected_SIL_relevant" ).val();
+    var selectedVariants = $( "#selected_Variant" ).val();
     var OverviewTable = [];
     var SOWSubject = '';
     var SOWSIL = '';
@@ -103,7 +102,7 @@ function main(){
     // create Table
     // ---------------------------------------------------------------------//
     function createTable(tableData) {
-        var headingData = ['ID', 'Subject', 'Milestone', 'SIL', 'Test State', 'SR2 Test State', 'SR3 Test State', 'SR4 Test State','Test Platforms'];
+        var headingData = ['ID', 'Subject', 'Milestone', 'SIL', 'Test State', 'SR2 Test State', 'SR3 Test State', 'SR4 Test State','Test Platforms','Variant'];
         //remove preveous table
         $("#OverviewTable").remove();
         //create the new table
@@ -165,15 +164,15 @@ function main(){
     function checkSILString(SILString){
         var retCode = 'false';
         if (selectedSILrelevant == '-All-'){
-            retCode = 'true'
+            retCode = 'valid'
         }
         else if (selectedSILrelevant == 'Safety Relevant') {
             if (SILString !== 'QM' && SILString !== 'No' && SILString !== '\xa0' && SILString !== '' ){
-                retCode = 'true';
+                retCode = 'valid';
             }
         }
         else if (selectedSILrelevant == 'QM' && SILString == 'QM'){
-                retCode = 'true';
+                retCode = 'valid';
         }
         return retCode;
     }
@@ -579,6 +578,8 @@ function main(){
         var PVSState = $(this).find('td.State.PVS').text();
         var TestPlatformOfReq = $(this).find('td.Affected').text(); //Affected Test Platforms
         var validTPF = checkString(TestPlatformOfReq,selectedTestPlatforms);
+        var VariantOfReq = $(this).find('td.Variant').text(); //Affected Test Platforms
+        var selectedVariant = checkString(VariantOfReq,selectedVariants);
         var SILLevelofReq = $(this).find('td.SIL').text();
         var useSILReq = checkSILString(SILLevelofReq);
 
@@ -593,7 +594,7 @@ function main(){
 
                     //generate DepartmentOverview
                     DepartmentOverview = CountDepStrings(SOWAffectedTestPlatforms, DepartmentOverview);
-                    OverviewTable.push([SOWid, SOWSubject, ReqMilestone, SOWSIL, activeReqTestState, '' , '', '',SOWAffectedTestPlatforms]);
+                    OverviewTable.push([SOWid, SOWSubject, ReqMilestone, SOWSIL, activeReqTestState, '' , '', '',SOWAffectedTestPlatforms, SOWVariant]);
                 }
                 else if (activeReq && activeTC){
                     //console.log('SOWTPF:', SOWAffectedTestPlatforms,' ProjTC:',ProjTCTestPlatform,');
@@ -607,7 +608,7 @@ function main(){
 
                     //generate DepartmentOverview
                     DepartmentOverview = CountDepStrings(SOWAffectedTestPlatforms, DepartmentOverview);
-                    OverviewTable.push([SOWid, SOWSubject, ReqMilestone, SOWSIL, activeReqTestState, PTSumState.PT1State , PTSumState.PT2State, PTSumState.PVSState,SOWAffectedTestPlatforms]);
+                    OverviewTable.push([SOWid, SOWSubject, ReqMilestone, SOWSIL, activeReqTestState, PTSumState.PT1State , PTSumState.PT2State, PTSumState.PVSState,SOWAffectedTestPlatforms, SOWVariant]);
                     //console.log('TC State:', activeReqTestState, '| PT State:',PTSumState );
                     //console.log('-------------------------------------------------------------------');
                 }
@@ -620,17 +621,19 @@ function main(){
             break;
 
             case 'sow':
-                if(Type == 'SOW Requirement' && validTPF == 'valid' && useSILReq == 'true') {
+                if(Type == 'SOW Requirement' && validTPF == 'valid' && useSILReq == 'valid' && selectedVariant == 'valid') {
                     activeReq = true;
                     SOWid = this.getElementsByClassName('ID')[1].childNodes[0].nodeValue;
                     SOWAffectedTestPlatforms = this.getElementsByClassName('Affected')[0].childNodes[0].nodeValue;
                     SOWSubject = this.getElementsByClassName('Subject')[0].childNodes[0].nodeValue;
+                    SOWVariant = this.getElementsByClassName('Variant')[0].childNodes[0].nodeValue;
+
                     ReqMilestone = Milestone;
                     SOWReqCount++;
                     SOWSIL = SILLevelofReq;
                     //var SOWState = this.getElementsByClassName('State')[0].childNodes[0].nodeValue;
-                    //console.log('SOWID:', SOWid, 'Planned for:', ReqMilestone, 'AffectedTPFs:', SOWAffectedTestPlatforms);
-                    //console.log('-------------------------------------------------------------------');
+                    console.log('SOWID:', SOWid, 'Planned for:', ReqMilestone, 'AffectedTPFs:', SOWAffectedTestPlatforms, 'Variant', SOWVariant);
+                    console.log('-------------------------------------------------------------------');
                 }
                 else if (Type == 'Test Case'){
                     var TCid = this.getElementsByClassName('ID')[1].childNodes[0].nodeValue;
