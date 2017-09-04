@@ -644,24 +644,27 @@ function main(){
 
             case 'test_case':
                 var TCid = this.getElementsByClassName('ID')[0].childNodes[0].nodeValue;
-                var TestPlatformOfTC = $(this).find('td.Platform').text(); //Affected Test Platforms
+                var TestPlatformOfTC = $(this).find('td.Platform').text(); //Test Platform
                 var PTTCStates = {PT1State:'',PT2State:'',PVSState:''};
+                var validTCTPF = checkString(TestPlatformOfTC,selectedTestPlatforms);
+                activeTC = false;
 
-                TCdata.TCState = this.getElementsByClassName('State')[0].childNodes[0].nodeValue;
-                TCdata.TestPF = this.getElementsByClassName('Platform')[0].childNodes[0].nodeValue;
+                if (validTCTPF == 'valid'){
+                    TCdata.TCState = this.getElementsByClassName('State')[0].childNodes[0].nodeValue;
+                    TCdata.TestPF = this.getElementsByClassName('Platform')[0].childNodes[0].nodeValue;
 
-                TCdata.PT1State = PT1State;
-                TCdata.PT2State = PT2State;
-                TCdata.PVSState = PVSState;
+                    TCdata.PT1State = PT1State;
+                    TCdata.PT2State = PT2State;
+                    TCdata.PVSState = PVSState;
 
-                TCStateSum.push(TCdata.TCState);
-                allTCdata.push(TCdata);
-                //if (activeReq == true){
-                //    console.log('|TPF:', TestPlatformOfTC, 'TCid:', TCid, '| TC State:',TCdata.TCState,'|, PT1:',TCdata.PT1State,'| PT2:',TCdata.PT2State,'| PVS:',TCdata.PVSState);
-                //}
-                TCdata = [];
-                activeTC = true;
-
+                    TCStateSum.push(TCdata.TCState);
+                    allTCdata.push(TCdata);
+                    //if (activeReq == true){
+                    //    console.log('|TPF:', TestPlatformOfTC, 'TCid:', TCid, '| TC State:',TCdata.TCState,'|, PT1:',TCdata.PT1State,'| PT2:',TCdata.PT2State,'| PVS:',TCdata.PVSState);
+                    //}
+                    TCdata = [];
+                    activeTC = true;
+                }
             break;
             default:
             break;
