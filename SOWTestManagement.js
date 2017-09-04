@@ -1,19 +1,20 @@
 $(document).ready(function() {
     var availableTestPlatforms = [];
+    var availableVariants = [];
 
     // ---------------------------------------------------------------------//
-    // generate List of available Testplatforms from HTML Table
+    // generate List of Items
     // ---------------------------------------------------------------------//
-    function aquireTestPlatforms(PFString){
+    function aquireStrings(String,Array){
         retCode = 'false';
-        if(PFString !== '' && PFString !== null && PFString !== '\xa0'){ //\xa0 == &nbsp;
-            //Split PFString if there is more than one TestPlatform selected: separated by: ,
-            var splitPFString = PFString.split(',');
-            for (var i = 0; i < splitPFString.length; i++) {
-                var trimedPFString = splitPFString[i].trim();
-                if (($.inArray(trimedPFString,availableTestPlatforms)) == -1)
+        if(String !== '' && String !== null && String !== '\xa0'){ //\xa0 == &nbsp;
+            //Split String if there is more than one TestPlatform selected: separated by: ,
+            var splitString = String.split(',');
+            for (var i = 0; i < splitString.length; i++) {
+                var trimedString = splitString[i].trim();
+                if (($.inArray(trimedString,Array)) == -1)
                 {
-                    availableTestPlatforms.push(trimedPFString);
+                    Array.push(trimedString);
                     retCode = 'added';
                 }
             }
@@ -22,38 +23,34 @@ $(document).ready(function() {
         }
 
     // ---------------------------------------------------------------------//
-    // append List of available Testplatforms to HTML selector
+    // append List of available Items to HTML selector
     // ---------------------------------------------------------------------//
-    function addTestPlatformsToSelector(){
-        //availableTestPlatforms.push('-All-');
-
-        for (var i = 0; i < availableTestPlatforms.length; i++) {
-            availableTestPlatforms.sort();
+    function addToSelector(Selector,Variants){
+        for (var i = 0; i < Variants.length; i++) {
+            Variants.sort();
             //append options to HTML selector for TestPlatforms
-            var sel = document.getElementById('selected_Test_Platforms');
+            var sel = document.getElementById(Selector);
             var opt = document.createElement('option');
-            opt.innerHTML = availableTestPlatforms[i];
-            opt.value = availableTestPlatforms[i];
+            opt.innerHTML = Variants[i];
+            opt.value = Variants[i];
             sel.appendChild(opt);
         }
-        //document.getElementById('selected_Test_Platforms').value = '-All-';
-        //test
-        //$.each(availableTestPlatforms, function(i,e){
-        //    $("#strings option[value='" + e + "']").prop("selected", true);
-        //});
-        //
     }
-
 
     // ---------------------------------------------------------------------//
     // find Affected TestPlatforms and add them to the selector
     // ---------------------------------------------------------------------//
     $('tbody tr').each(function() {
         var TestPlatform = $(this).find('td.Affected').text(); //Affected Test Platforms
-        aquireTestPlatforms(TestPlatform);
+        var Variants = $(this).find('td.Variant').text(); //Variants
+        aquireStrings(TestPlatform,availableTestPlatforms);
+        aquireStrings(Variants,availableVariants);
     });
-    addTestPlatformsToSelector();
+
+    addToSelector('selected_Test_Platforms', availableTestPlatforms);
     $("#selected_Test_Platforms").selectpicker('val', availableTestPlatforms);
+    addToSelector('selected_Variant', availableVariants);
+    $("#selected_Variant").selectpicker('val', availableVariants);
     main();
 
 });
