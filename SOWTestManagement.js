@@ -7,8 +7,8 @@ $(document).ready(function() {
     // ---------------------------------------------------------------------//
     function aquireStrings(String,Array){
         retCode = 'false';
-        if(String !== '' && String !== null && String !== '\xa0'){ //\xa0 == &nbsp;
-            //Split String if there is more than one TestPlatform selected: separated by: ,
+        if(String !== '' && String !== null){ //\xa0 == &nbsp; -> old code: "&& String !== '\xa0'"
+            //Split String if there is more than one String: separated by: ,
             var splitString = String.split(',');
             for (var i = 0; i < splitString.length; i++) {
                 var trimedString = splitString[i].trim();
@@ -74,6 +74,7 @@ function main(){
     var activeReq = false;
     var SOWid = 0;
     var SOWAffectedTestPlatforms = '';
+    var SOWVariant = '';
     var ProjTCTestPlatform = '';
     var AllStatusMask = {TCmissing:0,UnTested:0,NegTested:0,RestTested:0,PartTested:0,PartTestWithRest:0,PosTested:0};
     var MS2StatusMask = {TCmissing:0,UnTested:0,NegTested:0,RestTested:0,PartTested:0,PartTestWithRest:0,PosTested:0};
@@ -91,6 +92,7 @@ function main(){
     var allTestState = [];
     var selectedTestPlatforms = $( "#selected_Test_Platforms" ).val();
     var selectedSILrelevant = $( "#selected_SIL_relevant" ).val();
+    var selectedVariants = $( "#selected_Variant" ).val();
     var OverviewTable = [];
     var SOWSubject = '';
     var SOWSIL = '';
@@ -100,7 +102,7 @@ function main(){
     // create Table
     // ---------------------------------------------------------------------//
     function createTable(tableData) {
-        var headingData = ['ID', 'Subject', 'Milestone', 'SIL', 'Test State', 'SR2 Test State', 'SR3 Test State', 'SR4 Test State','Test Platforms'];
+        var headingData = ['ID', 'Subject', 'Milestone', 'SIL', 'Test State', 'SR2 Test State', 'SR3 Test State', 'SR4 Test State','Test Platforms','Variant'];
         //remove preveous table
         $("#OverviewTable").remove();
         //create the new table
@@ -162,15 +164,15 @@ function main(){
     function checkSILString(SILString){
         var retCode = 'false';
         if (selectedSILrelevant == '-All-'){
-            retCode = 'true'
+            retCode = 'valid'
         }
         else if (selectedSILrelevant == 'Safety Relevant') {
             if (SILString !== 'QM' && SILString !== 'No' && SILString !== '\xa0' && SILString !== '' ){
-                retCode = 'true';
+                retCode = 'valid';
             }
         }
         else if (selectedSILrelevant == 'QM' && SILString == 'QM'){
-                retCode = 'true';
+                retCode = 'valid';
         }
         return retCode;
     }
@@ -576,6 +578,8 @@ function main(){
         var PVSState = $(this).find('td.State.PVS').text();
         var TestPlatformOfReq = $(this).find('td.Affected').text(); //Affected Test Platforms
         var validTPF = checkString(TestPlatformOfReq,selectedTestPlatforms);
+        var VariantOfReq = $(this).find('td.Variant').text(); //Affected Test Platforms
+        var selectedVariant = checkString(VariantOfReq,selectedVariants);
         var SILLevelofReq = $(this).find('td.SIL').text();
         var useSILReq = checkSILString(SILLevelofReq);
 
@@ -590,7 +594,7 @@ function main(){
 
                     //generate DepartmentOverview
                     DepartmentOverview = CountDepStrings(SOWAffectedTestPlatforms, DepartmentOverview);
-                    OverviewTable.push([SOWid, SOWSubject, ReqMilestone, SOWSIL, activeReqTestState, '' , '', '',SOWAffectedTestPlatforms]);
+                    OverviewTable.push([SOWid, SOWSubject, ReqMilestone, SOWSIL, activeReqTestState, '' , '', '',SOWAffectedTestPlatforms, SOWVariant]);
                 }
                 else if (activeReq && activeTC){
                     //console.log('SOWTPF:', SOWAffectedTestPlatforms,' ProjTC:',ProjTCTestPlatform,');
@@ -604,7 +608,7 @@ function main(){
 
                     //generate DepartmentOverview
                     DepartmentOverview = CountDepStrings(SOWAffectedTestPlatforms, DepartmentOverview);
-                    OverviewTable.push([SOWid, SOWSubject, ReqMilestone, SOWSIL, activeReqTestState, PTSumState.PT1State , PTSumState.PT2State, PTSumState.PVSState,SOWAffectedTestPlatforms]);
+                    OverviewTable.push([SOWid, SOWSubject, ReqMilestone, SOWSIL, activeReqTestState, PTSumState.PT1State , PTSumState.PT2State, PTSumState.PVSState,SOWAffectedTestPlatforms, SOWVariant]);
                     //console.log('TC State:', activeReqTestState, '| PT State:',PTSumState );
                     //console.log('-------------------------------------------------------------------');
                 }
@@ -617,17 +621,19 @@ function main(){
             break;
 
             case 'sow':
-                if(Type == 'SOW Requirement' && validTPF == 'valid' && useSILReq == 'true') {
+                if(Type == 'SOW Requirement' && validTPF == 'valid' && useSILReq == 'valid' && selectedVariant == 'valid') {
                     activeReq = true;
                     SOWid = this.getElementsByClassName('ID')[1].childNodes[0].nodeValue;
                     SOWAffectedTestPlatforms = this.getElementsByClassName('Affected')[0].childNodes[0].nodeValue;
                     SOWSubject = this.getElementsByClassName('Subject')[0].childNodes[0].nodeValue;
+                    SOWVariant = this.getElementsByClassName('Variant')[0].childNodes[0].nodeValue;
+
                     ReqMilestone = Milestone;
                     SOWReqCount++;
                     SOWSIL = SILLevelofReq;
                     //var SOWState = this.getElementsByClassName('State')[0].childNodes[0].nodeValue;
-                    //console.log('SOWID:', SOWid, 'Planned for:', ReqMilestone, 'AffectedTPFs:', SOWAffectedTestPlatforms);
-                    //console.log('-------------------------------------------------------------------');
+                    console.log('SOWID:', SOWid, 'Planned for:', ReqMilestone, 'AffectedTPFs:', SOWAffectedTestPlatforms, 'Variant', SOWVariant);
+                    console.log('-------------------------------------------------------------------');
                 }
                 else if (Type == 'Test Case'){
                     var TCid = this.getElementsByClassName('ID')[1].childNodes[0].nodeValue;
