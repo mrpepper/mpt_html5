@@ -697,7 +697,7 @@ function main(){
                 var TestPlatformOfTC = $(this).find('td.Platform').text(); //Test Platform
                 var PTTCStates = {PT1State:'',PT2State:'',PVSState:''};
                 var validTCTPF = checkString(TestPlatformOfTC,selectedTestPlatforms);
-                activeTC = false;
+                //activeTC = false;
 
                 if (validTCTPF == 'valid'){
                     TCdata.TCState = this.getElementsByClassName('State')[0].childNodes[0].nodeValue;
