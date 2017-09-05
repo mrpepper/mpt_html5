@@ -1,6 +1,7 @@
 $(document).ready(function() {
     var availableTestPlatforms = [];
     var availableVariants = [];
+    var availableCustomer = [];
 
     // ---------------------------------------------------------------------//
     // generate List of Items
@@ -43,14 +44,18 @@ $(document).ready(function() {
     $('tbody tr').each(function() {
         var TestPlatform = $(this).find('td.Affected').text(); //Affected Test Platforms
         var Variants = $(this).find('td.Variant').text(); //Variants
+        var Customer = $(this).find('td.Customer').text(); //Variants
         aquireStrings(TestPlatform,availableTestPlatforms);
         aquireStrings(Variants,availableVariants);
+        aquireStrings(Customer,availableCustomer);
     });
 
     addToSelector('selected_Test_Platforms', availableTestPlatforms);
     $("#selected_Test_Platforms").selectpicker('val', availableTestPlatforms);
     addToSelector('selected_Variant', availableVariants);
     $("#selected_Variant").selectpicker('val', availableVariants);
+    addToSelector('selected_Customer', availableCustomer);
+    $("#selected_Customer").selectpicker('val', availableCustomer);
     main();
 
 });
@@ -93,6 +98,7 @@ function main(){
     var selectedTestPlatforms = $( "#selected_Test_Platforms" ).val();
     var selectedSILrelevant = $( "#selected_SIL_relevant" ).val();
     var selectedVariants = $( "#selected_Variant" ).val();
+    var selectedCustomer = $( "#selected_Customer" ).val();
     var OverviewTable = [];
     var SOWSubject = '';
     var SOWSIL = '';
@@ -579,9 +585,11 @@ function main(){
         var TestPlatformOfReq = $(this).find('td.Affected').text(); //Affected Test Platforms
         var validTPF = checkString(TestPlatformOfReq,selectedTestPlatforms);
         var VariantOfReq = $(this).find('td.Variant').text(); //Affected Test Platforms
-        var selectedVariant = checkString(VariantOfReq,selectedVariants);
+        var validVariant = checkString(VariantOfReq,selectedVariants);
         var SILLevelofReq = $(this).find('td.SIL').text();
-        var useSILReq = checkSILString(SILLevelofReq);
+        var validSILReq = checkSILString(SILLevelofReq);
+        var CustomerOfReq = $(this).find('td.Customer').text(); //Affected Test Platforms
+        var validCustomer = checkString(CustomerOfReq,selectedCustomer);
 
         switch($(this).attr('class'))
         {
@@ -621,7 +629,7 @@ function main(){
             break;
 
             case 'sow':
-                if(Type == 'SOW Requirement' && validTPF == 'valid' && useSILReq == 'valid' && selectedVariant == 'valid') {
+                if(Type == 'SOW Requirement' && validTPF == 'valid' && validSILReq == 'valid' && validVariant == 'valid' && validCustomer == 'valid') {
                     activeReq = true;
                     SOWid = this.getElementsByClassName('ID')[1].childNodes[0].nodeValue;
                     SOWAffectedTestPlatforms = this.getElementsByClassName('Affected')[0].childNodes[0].nodeValue;
