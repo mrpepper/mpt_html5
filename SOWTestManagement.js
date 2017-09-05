@@ -104,6 +104,7 @@ function main(){
     var SOWSIL = '';
     var DepartmentOverview = {};
 
+
     // ---------------------------------------------------------------------//
     // create Table
     // ---------------------------------------------------------------------//
@@ -119,8 +120,9 @@ function main(){
 
         // Table Heading
         var tableHead = document.createElement('thead');
-        tableHead.setAttribute("class", "thead-default");
+        //tableHead.setAttribute("class", "thead-default");
         var HeadingRow = document.createElement('tr');
+        HeadingRow.setAttribute("class", "active");
         headingData.forEach(function(data) {
             var cell = document.createElement('td');
             cell.appendChild(document.createTextNode(data));
@@ -130,14 +132,18 @@ function main(){
 
         // Table Body
         var tableBody = document.createElement('tbody');
-        tableBody.setAttribute("class", "table table-striped");
+        //tableBody.setAttribute("class", "table table-striped");
         tableData.forEach(function(rowData) {
             var row = document.createElement('tr');
-            row.setAttribute("class", "clickable-row");
-            row.setAttribute("data-href", "integrity://lanwinsvmks1.eu.adglob.net:8001/im/viewissue?selection=884657")
-
+            //row.setAttribute("class", "clickable-row");
+            //row.setAttribute("data-href", "integrity://lanwinsvmks1.eu.adglob.net:8001/im/viewissue?selection=884657")
+            //var context = getColor(rowData[4]);
+            //row.setAttribute("class",context);
             rowData.forEach(function(cellData) {
                 var cell = document.createElement('td');
+                var context = getColor(cellData);
+                //cell.setAttribute("class",context);
+                cell.setAttribute("bgcolor",context);
                 cell.appendChild(document.createTextNode(cellData));
                 row.appendChild(cell);
             });
@@ -148,6 +154,42 @@ function main(){
         table.appendChild(tableBody);
         //document.body.appendChild(table);
         document.getElementById("TableContainer").appendChild(table);
+    }
+    // ---------------------------------------------------------------------//
+    // get Color
+    // ---------------------------------------------------------------------//
+    function getColor(State){
+        // States: TCmissing, UnTested, NegTested, RestTested, //
+        //            PartTested, PartTestWithRest, PosTested//
+        var context = "";
+        switch (State)
+        {
+            case 'TCmissing':
+                context = "#3366CC"; //blue
+            break;
+            case 'UnTested':
+                context = "#FF9900"; //orange
+            break;
+            case 'NegTested':
+                context = "#DC3912"; //red
+            break;
+            case 'RestTested':
+                context = "#990099"; //violet
+            break;
+            case 'PartTested':
+                context = "#DD4477"; //pink
+            break;
+            case 'PartTestWithRest':
+                context = "#0099C6"; //light blue
+            break;
+            case 'PosTested':
+                context = "#109618"; //green
+            break;
+            default:
+                context = "#FFFFFF"; //white
+            break;
+        }
+        return context;
     }
     // ---------------------------------------------------------------------//
     // check if String is equal to selection
