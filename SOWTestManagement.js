@@ -848,12 +848,7 @@ function main(){
 
 
         var view = new google.visualization.DataView(data);
-        //view.setColumns([0, 1,
-        //                 { calc: "stringify",
-        //                   sourceColumn: 1,
-        //                   type: "string",
-        //                   role: "annotation" },
-        //                 2]);
+
 
         var options = {
             title: 'Department Overview',
@@ -894,12 +889,12 @@ function main(){
 
         var dataTable = google.visualization.arrayToDataTable(data);
         //Formatters
-        var intergerFormatter = new google.visualization.NumberFormat({
+        var integerFormater = new google.visualization.NumberFormat({
             groupingSymbol: ",",
             fractionDigits: 0
         });
         for (var i = 0; i < data[0].length; i++) {
-            intergerFormatter.format(dataTable, i);
+            integerFormater.format(dataTable, i);
         }
 
         var view = new google.visualization.DataView(dataTable);
@@ -940,7 +935,7 @@ function main(){
             html +=
             metrics[0] +
             ": " +
-            intergerFormatter.formatValue(dataTable.getValue(row, col)) +
+            integerFormater.formatValue(dataTable.getValue(row, col)) +
             "\n";
             return html;
             };
@@ -975,12 +970,12 @@ function main(){
 
         var dataTable = google.visualization.arrayToDataTable(data);
         //Formatters
-        var intergerFormatter = new google.visualization.NumberFormat({
+        var integerFormater = new google.visualization.NumberFormat({
             groupingSymbol: ",",
             fractionDigits: 0
         });
         for (var i = 0; i < data[0].length; i++) {
-            intergerFormatter.format(dataTable, i);
+            integerFormater.format(dataTable, i);
         }
 
         var view = new google.visualization.DataView(dataTable);
@@ -1016,7 +1011,7 @@ function main(){
             html +=
             metrics[0] +
             ": " +
-            intergerFormatter.formatValue(dataTable.getValue(row, col)) +
+            integerFormater.formatValue(dataTable.getValue(row, col)) +
             "\n";
             return html;
             };
