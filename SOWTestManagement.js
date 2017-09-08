@@ -835,20 +835,32 @@ function main(){
     // ---------------------------------------------------------------------//
     google.charts.setOnLoadCallback(drawDepartmentChart);
     function drawDepartmentChart(){
-        var data = new google.visualization.DataTable()
-        data.addColumn('string', 'Dep');
-        data.addColumn('number', 'count');
-        var testarray = [];
+        var dataTable = new google.visualization.DataTable()
+        dataTable.addColumn('string', 'Dep');
+        dataTable.addColumn('number', 'count');
+        var TableArray = [];
 
         for (var key in DepartmentOverview) {
-            testarray.push([key, DepartmentOverview[key]]);
+            TableArray.push([key, DepartmentOverview[key]]);
         }
-        data.addRows(testarray);
+        dataTable.addRows(TableArray);
 
-
-
-        var view = new google.visualization.DataView(data);
-
+        var view = new google.visualization.DataView(dataTable);
+        // ---------------------------------------------------------------------//
+        var cols = [0];
+        cols.push({
+            sourceColumn: 1,
+            type: "number",
+        });
+        cols.push({
+            calc: "stringify",
+            sourceColumn: 1,
+            type: "string",
+            role: "annotation"
+        });
+        var view = new google.visualization.DataView(dataTable);
+        view.setColumns(cols);
+        //---------------------------------------------------------------------//
 
         var options = {
             title: 'Department Overview',
@@ -857,6 +869,10 @@ function main(){
             legend: { position: 'right', maxLines: 3 },
             bar: { groupWidth: '50%' },
         };
+
+
+
+
         var chart = new google.visualization.ColumnChart(document.getElementById('DepartmentOverview'));
         chart.draw(view, options);
     }
