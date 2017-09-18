@@ -900,6 +900,8 @@ function main(){
             legend: { position: 'right', alignment: 'center', maxLines: 3 },
             chartArea: {left:80, bottom:20, width:"60%", height:"70%"},
             bar: { groupWidth: '50%' },
+            //////////dblue    , red     , rose    ,orange   ,kaki     ,lgreen    ,dgreen
+            colors : ['#3366CC','#DC3912','#DD4477','#FF9900','#AAAA11','#66AA00','#109618']
             //isStacked: true
         };
 
@@ -981,6 +983,8 @@ function main(){
             legend: { position: 'right', alignment: 'center', maxLines: 6 },
             chartArea: {left:80, bottom:20, width:"60%", height:"70%"},
             bar: { groupWidth: '50%' },
+            //////////dblue    , red     , rose    ,orange   ,kaki     ,lgreen    ,dgreen
+            colors : ['#3366CC','#DC3912','#DD4477','#FF9900','#AAAA11','#66AA00','#109618']
             //isStacked: true
         };
 
