@@ -109,7 +109,7 @@ function main(){
     // create Table
     // ---------------------------------------------------------------------//
     function createTable(tableData) {
-        var headingData = ['ID', 'Subject', 'Milestone', 'SIL', 'Test State', 'SR2 Test State', 'SR3 Test State', 'SR4 Test State','Test Platforms','Variant'];
+        var headingData = ['ID', 'Subject', 'Milestone', 'SIL', 'SR2 Test State', 'SR3 Test State', 'SR4 Test State','Test Platforms','Variant'];
         //remove preveous table
         $("#OverviewTable").remove();
         //create the new table
@@ -658,7 +658,7 @@ function main(){
 
                     //generate DepartmentOverview
                     DepartmentOverview = CountDepStrings(SOWAffectedTestPlatforms, DepartmentOverview);
-                    OverviewTable.push([SOWid, SOWSubject, ReqMilestone, SOWSIL, activeReqTestState, PTSumState.PT1State , PTSumState.PT2State, PTSumState.PVSState,SOWAffectedTestPlatforms, SOWVariant]);
+                    OverviewTable.push([SOWid, SOWSubject, ReqMilestone, SOWSIL, PTSumState.PT1State , PTSumState.PT2State, PTSumState.PVSState,SOWAffectedTestPlatforms, SOWVariant]);
                     //console.log('TC State:', activeReqTestState, '| PT State:',PTSumState );
                     //console.log('-------------------------------------------------------------------');
                 }
