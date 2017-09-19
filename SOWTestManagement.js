@@ -682,8 +682,8 @@ function main(){
                     SOWReqCount++;
                     SOWSIL = SILLevelofReq;
                     //var SOWState = this.getElementsByClassName('State')[0].childNodes[0].nodeValue;
-                    console.log('SOWID:', SOWid, 'Planned for:', ReqMilestone, 'AffectedTPFs:', SOWAffectedTestPlatforms, 'Variant', SOWVariant);
-                    console.log('-------------------------------------------------------------------');
+                    //console.log('SOWID:', SOWid, 'Planned for:', ReqMilestone, 'AffectedTPFs:', SOWAffectedTestPlatforms, 'Variant', SOWVariant);
+                    //console.log('-------------------------------------------------------------------');
                 }
                 else if (Type == 'Test Case'){
                     var TCid = this.getElementsByClassName('ID')[1].childNodes[0].nodeValue;
