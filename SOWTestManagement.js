@@ -644,7 +644,7 @@ function main(){
 
                     //generate DepartmentOverview
                     DepartmentOverview = CountDepStrings(SOWAffectedTestPlatforms, DepartmentOverview);
-                    OverviewTable.push([SOWid, SOWSubject, ReqMilestone, SOWSIL, activeReqTestState, '' , '', '',SOWAffectedTestPlatforms, SOWVariant]);
+                    OverviewTable.push([SOWid, SOWSubject, ReqMilestone, SOWSIL, '' , '', '',SOWAffectedTestPlatforms, SOWVariant]);
                 }
                 else if (activeReq && activeTC){
                     //console.log('SOWTPF:', SOWAffectedTestPlatforms,' ProjTC:',ProjTCTestPlatform,');
