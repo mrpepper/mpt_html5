@@ -132,17 +132,16 @@ function main(){
 
         // Table Body
         var tableBody = document.createElement('tbody');
-        //tableBody.setAttribute("class", "table table-striped");
         tableData.forEach(function(rowData) {
             var row = document.createElement('tr');
-            //row.setAttribute("class", "clickable-row");
-            //row.setAttribute("data-href", "integrity://lanwinsvmks1.eu.adglob.net:8001/im/viewissue?selection=884657")
-            //var context = getColor(rowData[4]);
-            //row.setAttribute("class",context);
+            var IntegrityURL = "integrity://lanwinsvmks1.eu.adglob.net:8001/im/viewissue?selection=";
+            var ReqURL = IntegrityURL.concat(rowData[0]);
+
+            row.setAttribute("class", "clickable-tr");
+            row.setAttribute('href', ReqURL);
             rowData.forEach(function(cellData) {
                 var cell = document.createElement('td');
                 var context = getColor(cellData);
-                //cell.setAttribute("class",context);
                 cell.setAttribute("bgcolor",context);
                 cell.appendChild(document.createTextNode(cellData));
                 row.appendChild(cell);
@@ -152,7 +151,6 @@ function main(){
 
         table.appendChild(tableHead);
         table.appendChild(tableBody);
-        //document.body.appendChild(table);
         document.getElementById("TableContainer").appendChild(table);
     }
     // ---------------------------------------------------------------------//
