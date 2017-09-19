@@ -159,6 +159,8 @@ function main(){
     function getColor(State){
         // States: TCmissing, UnTested, NegTested, RestTested, //
         //            PartTested, PartTestWithRest, PosTested//
+        ////////////dblue    , red     , rose    ,orange   ,kaki     ,lgreen    ,dgreen
+        //colors : ['#3366CC','#DC3912','#DD4477','#FF9900','#AAAA11','#66AA00','#109618']
         var context = "";
         switch (State)
         {
@@ -166,22 +168,22 @@ function main(){
                 context = "#3366CC"; //blue
             break;
             case 'UnTested':
-                context = "#FF9900"; //orange
+                context = "#DD4477"; //rose
             break;
             case 'NegTested':
                 context = "#DC3912"; //red
             break;
             case 'RestTested':
-                context = "#990099"; //violet
+                context = "#AAAA11"; //kaki
             break;
             case 'PartTested':
-                context = "#DD4477"; //pink
+                context = "#FF9900"; //pink
             break;
             case 'PartTestWithRest':
-                context = "#0099C6"; //light blue
+                context = "#66AA00"; //lgreen
             break;
             case 'PosTested':
-                context = "#109618"; //green
+                context = "#109618"; //dgreen
             break;
             default:
                 context = "#FFFFFF"; //white
