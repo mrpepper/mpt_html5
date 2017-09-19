@@ -747,10 +747,10 @@ function main(){
 
         var options = {
             title: 'Test Coverage',
-            width: 600,
+            width: 400,
             height: 400,
             legend: { position: 'right',alignment: 'center', maxLines: 3 },
-            chartArea: {left:80, bottom:20},
+            chartArea: {left:50, bottom:30},
             colors: ['#109618', '#DC3912']
         };
 
@@ -864,9 +864,9 @@ function main(){
 
         var options = {
             title: 'Department Overview',
-            width: 800,
+            width: 400,
             height: 400,
-            legend: { position: 'right', maxLines: 3 },
+            chartArea: {left:50, bottom:30, width:"70%", height:"70%"},
             bar: { groupWidth: '50%' },
         };
 
@@ -880,85 +880,85 @@ function main(){
     // ---------------------------------------------------------------------//
     //  Test Coverage over Milestones Chart
     // ---------------------------------------------------------------------//
-    google.charts.setOnLoadCallback(drawTestCoverage);
-    function drawTestCoverage(){
-
-        var data = [
-            ['Release', 'Test Case missing', 'negative tested', 'untested', 'partially tested','tested with restrictions','part tested with restrictions', 'positive tested'],
-            //['All', AllStatusMask.TCmissing,AllStatusMask.NegTested,AllStatusMask.UnTested,AllStatusMask.RestTested,AllStatusMask.PartTestWithRest,AllStatusMask.PartTested,AllStatusMask.PosTested],
-            ['SR2', MS2StatusMask.TCmissing,MS2StatusMask.NegTested,MS2StatusMask.UnTested,MS2StatusMask.RestTested,MS2StatusMask.PartTestWithRest,MS2StatusMask.PartTested,MS2StatusMask.PosTested],
-            ['SR3', MS3StatusMask.TCmissing,MS3StatusMask.NegTested,MS3StatusMask.UnTested,MS3StatusMask.RestTested,MS3StatusMask.PartTestWithRest,MS3StatusMask.PartTested,MS3StatusMask.PosTested],
-            ['SR4', MS4StatusMask.TCmissing,MS4StatusMask.NegTested,MS4StatusMask.UnTested,MS4StatusMask.RestTested,MS4StatusMask.PartTestWithRest,MS4StatusMask.PartTested,MS4StatusMask.PosTested]
-        ];
-        var aggregates = ["State", "Release"];
-        var metrics = ["SOWs"];
-
-        var options = {
-            title: 'Test States over Milestones',
-            width: 1000,
-            height: 400,
-            legend: { position: 'right', alignment: 'center', maxLines: 3 },
-            chartArea: {left:80, bottom:20, width:"60%", height:"70%"},
-            bar: { groupWidth: '50%' },
-            //////////dblue    , red     , rose    ,orange   ,kaki     ,lgreen    ,dgreen
-            colors : ['#3366CC','#DC3912','#DD4477','#FF9900','#AAAA11','#66AA00','#109618']
-            //isStacked: true
-        };
-
-        var dataTable = google.visualization.arrayToDataTable(data);
-        //Formatters
-        var integerFormater = new google.visualization.NumberFormat({
-            groupingSymbol: ",",
-            fractionDigits: 0
-        });
-        for (var i = 0; i < data[0].length; i++) {
-            integerFormater.format(dataTable, i);
-        }
-
-        var view = new google.visualization.DataView(dataTable);
-        var cols = [0];
-        for (var i = 1; i < data[0].length; i++) {
-            cols.push({
-                sourceColumn: i,
-                type: "number",
-                label: data[0][i]
-            });
-            cols.push({
-                calc: "stringify",
-                sourceColumn: i,
-                type: "string",
-                role: "annotation"
-            });
-            cols.push({
-                calc: createTooltip(i),
-                /*(function(i) {
-                      return function(dataTable, row){
-                        return "Url count" + dataTable.getValue(row, i)+"</b>";
-                    };
-                 })(i),*/
-                type: "string",
-                role: "tooltip",
-                p: { html: true }
-            });
-        }
-        view.setColumns(cols);
-        var chart = new google.visualization.ColumnChart(document.getElementById('TestCoverage'));
-        chart.draw(view, options);
-
-        function createTooltip(col) {
-        return function(dataTable, row) {
-            var html = "";
-            html += aggregates[0] + ": " + dataTable.getColumnLabel(col) + "\n";
-            html += aggregates[1] + ": " + dataTable.getValue(row, 0) + "\n";
-            html +=
-            metrics[0] +
-            ": " +
-            integerFormater.formatValue(dataTable.getValue(row, col)) +
-            "\n";
-            return html;
-            };
-        }
-    }
+    //google.charts.setOnLoadCallback(drawTestCoverage);
+    //function drawTestCoverage(){
+//
+    //    var data = [
+    //        ['Release', 'Test Case missing', 'negative tested', 'untested', 'partially tested','tested with restrictions','part tested with restrictions', 'positive tested'],
+    //        //['All', AllStatusMask.TCmissing,AllStatusMask.NegTested,AllStatusMask.UnTested,AllStatusMask.RestTested,AllStatusMask.PartTestWithRest,AllStatusMask.PartTested,AllStatusMask.PosTested],
+    //        ['SR2', MS2StatusMask.TCmissing,MS2StatusMask.NegTested,MS2StatusMask.UnTested,MS2StatusMask.RestTested,MS2StatusMask.PartTestWithRest,MS2StatusMask.PartTested,MS2StatusMask.PosTested],
+    //        ['SR3', MS3StatusMask.TCmissing,MS3StatusMask.NegTested,MS3StatusMask.UnTested,MS3StatusMask.RestTested,MS3StatusMask.PartTestWithRest,MS3StatusMask.PartTested,MS3StatusMask.PosTested],
+    //        ['SR4', MS4StatusMask.TCmissing,MS4StatusMask.NegTested,MS4StatusMask.UnTested,MS4StatusMask.RestTested,MS4StatusMask.PartTestWithRest,MS4StatusMask.PartTested,MS4StatusMask.PosTested]
+    //    ];
+    //    var aggregates = ["State", "Release"];
+    //    var metrics = ["SOWs"];
+//
+    //    var options = {
+    //        title: 'Test States over Milestones',
+    //        width: 600,
+    //        height: 400,
+    //        legend: { position: 'right', alignment: 'center', maxLines: 3 },
+    //        chartArea: {left:80, bottom:20, width:"60%", height:"70%"},
+    //        bar: { groupWidth: '50%' },
+    //        //////////dblue    , red     , rose    ,orange   ,kaki     ,lgreen    ,dgreen
+    //        colors : ['#3366CC','#DC3912','#DD4477','#FF9900','#AAAA11','#66AA00','#109618']
+    //        //isStacked: true
+    //    };
+//
+    //    var dataTable = google.visualization.arrayToDataTable(data);
+    //    //Formatters
+    //    var integerFormater = new google.visualization.NumberFormat({
+    //        groupingSymbol: ",",
+    //        fractionDigits: 0
+    //    });
+    //    for (var i = 0; i < data[0].length; i++) {
+    //        integerFormater.format(dataTable, i);
+    //    }
+//
+    //    var view = new google.visualization.DataView(dataTable);
+    //    var cols = [0];
+    //    for (var i = 1; i < data[0].length; i++) {
+    //        cols.push({
+    //            sourceColumn: i,
+    //            type: "number",
+    //            label: data[0][i]
+    //        });
+    //        cols.push({
+    //            calc: "stringify",
+    //            sourceColumn: i,
+    //            type: "string",
+    //            role: "annotation"
+    //        });
+    //        cols.push({
+    //            calc: createTooltip(i),
+    //            /*(function(i) {
+    //                  return function(dataTable, row){
+    //                    return "Url count" + dataTable.getValue(row, i)+"</b>";
+    //                };
+    //             })(i),*/
+    //            type: "string",
+    //            role: "tooltip",
+    //            p: { html: true }
+    //        });
+    //    }
+    //    view.setColumns(cols);
+//  //      var chart = new google.visualization.ColumnChart(document.getElementById('TestCoverage'));
+    //    //chart.draw(view, options);
+//
+    //    function createTooltip(col) {
+    //    return function(dataTable, row) {
+    //        var html = "";
+    //        html += aggregates[0] + ": " + dataTable.getColumnLabel(col) + "\n";
+    //        html += aggregates[1] + ": " + dataTable.getValue(row, 0) + "\n";
+    //        html +=
+    //        metrics[0] +
+    //        ": " +
+    //        integerFormater.formatValue(dataTable.getValue(row, col)) +
+    //        "\n";
+    //        return html;
+    //        };
+    //    }
+    //}
 
     // ---------------------------------------------------------------------//
     //  Test Coverage over Milestones Chart
@@ -978,10 +978,10 @@ function main(){
 
         var options = {
             title: 'PT Test States over Milestones',
-            width: 1000,
+            width: 700,
             height: 400,
             legend: { position: 'right', alignment: 'center', maxLines: 6 },
-            chartArea: {left:80, bottom:20, width:"60%", height:"70%"},
+            chartArea: {left:50, bottom:30, width:"70%", height:"70%"},
             bar: { groupWidth: '50%' },
             //////////dblue    , red     , rose    ,orange   ,kaki     ,lgreen    ,dgreen
             colors : ['#3366CC','#DC3912','#DD4477','#FF9900','#AAAA11','#66AA00','#109618']
