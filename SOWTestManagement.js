@@ -614,7 +614,31 @@ function main(){
         return PTsumStates;
     }
 
-
+    // ---------------------------------------------------------------------//
+    // Add PTSum State "TC missing" for Requirements Table
+    // ---------------------------------------------------------------------//
+    function handleEmptyPTStates(ReqMS){
+        var PTSumState = {PT1State:'',PT2State:'',PVSState:''};
+        var slicedReqMS = ReqMS.substring(0,3);
+        switch (slicedReqMS)
+        {
+            case 'MS2':
+                PTSumState.PT1State = "TCmissing";
+                PTSumState.PT2State = "TCmissing";
+                PTSumState.PVSState = "TCmissing";
+            break;
+            case 'MS3':
+                PTSumState.PT2State = "TCmissing";
+                PTSumState.PVSState = "TCmissing";
+            break;
+            case 'MS4':
+                PTSumState.PVSState = "TCmissing";
+            break;
+            default:
+            break;
+        }
+        return PTSumState;
+    }
     // ---------------------------------------------------------------------//
     // Main Routine: parse HTML trou tbody > tr
     // ---------------------------------------------------------------------//
@@ -639,12 +663,13 @@ function main(){
                 if (activeReq  && !activeTC){
                     CountPlanningState(ReqMilestone,'TCmissing');
                     CountPTPlanningState(ReqMilestone,'TCmissing');
+                    var PTSumState = handleEmptyPTStates(ReqMilestone);
                     //console.log('Sum State: TCmissing');
                     //console.log('-------------------------------------------------------------------');
 
                     //generate DepartmentOverview
                     DepartmentOverview = CountDepStrings(SOWAffectedTestPlatforms, DepartmentOverview);
-                    OverviewTable.push([SOWid, SOWSubject, ReqMilestone, SOWSIL, '' , '', '',SOWAffectedTestPlatforms, SOWVariant]);
+                    OverviewTable.push([SOWid, SOWSubject, ReqMilestone, SOWSIL, PTSumState.PT1State , PTSumState.PT2State, PTSumState.PVSState,SOWAffectedTestPlatforms, SOWVariant]);
                 }
                 else if (activeReq && activeTC){
                     //console.log('SOWTPF:', SOWAffectedTestPlatforms,' ProjTC:',ProjTCTestPlatform,');
