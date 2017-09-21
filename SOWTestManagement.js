@@ -157,8 +157,7 @@ function main(){
     // get Color
     // ---------------------------------------------------------------------//
     function getColor(State){
-        // States: TCmissing, UnTested, NegTested, RestTested, //
-        //            PartTested, PartTestWithRest, PosTested//
+        // States:  empty    ,TCmissing, UnTested , NegTested, RestTested, PartTested, PartTestWithRest, PosTested//
         ////////////dblue    , red     , rose    ,orange   ,kaki     ,lgreen    ,dgreen
         //colors : ['#3366CC','#DC3912','#DD4477','#FF9900','#AAAA11','#66AA00','#109618']
         var context = "";
@@ -167,19 +166,19 @@ function main(){
             case 'TCmissing':
                 context = "#3366CC"; //blue
             break;
+            case 'NegTested':
+                context = "#DC3912"; //red
+            break;
             case 'UnTested':
                 context = "#DD4477"; //rose
             break;
-            case 'NegTested':
-                context = "#DC3912"; //red
+            case 'PartTestWithRest':
+                context = "#FF9900"; //orange
             break;
             case 'RestTested':
                 context = "#AAAA11"; //kaki
             break;
             case 'PartTested':
-                context = "#FF9900"; //pink
-            break;
-            case 'PartTestWithRest':
                 context = "#66AA00"; //lgreen
             break;
             case 'PosTested':
@@ -684,7 +683,7 @@ function main(){
                     //generate DepartmentOverview
                     DepartmentOverview = CountDepStrings(SOWAffectedTestPlatforms, DepartmentOverview);
                     OverviewTable.push([SOWid, SOWSubject, ReqMilestone, SOWSIL, PTSumState.PT1State , PTSumState.PT2State, PTSumState.PVSState,SOWAffectedTestPlatforms, SOWVariant]);
-                    //console.log('TC State:', activeReqTestState, '| PT State:',PTSumState );
+                    //console.log('SOW ID:', SOWid, '| PT State:',PTSumState );
                     //console.log('-------------------------------------------------------------------');
                 }
                 //resetting for new Requirement
@@ -775,7 +774,7 @@ function main(){
             width: 400,
             height: 400,
             legend: { position: 'right',alignment: 'center', maxLines: 3 },
-            chartArea: {left:50, bottom:30},
+            chartArea: {left:30, bottom:30},
             colors: ['#109618', '#DC3912']
         };
 
@@ -891,6 +890,7 @@ function main(){
             title: 'Department Overview',
             width: 400,
             height: 400,
+            legend: "none",
             chartArea: {left:50, bottom:30, width:"70%", height:"70%"},
             bar: { groupWidth: '50%' },
         };
@@ -992,10 +992,10 @@ function main(){
     function drawPTCoverage(){
 
         var data = [
-            ['Release', 'Test Case missing', 'negative tested', 'untested', 'partially tested','tested with restrictions','part tested with restrictions', 'positive tested'],
-            ['SR2', MS2PTStatusMask.TCmissing,MS2PTStatusMask.NegTested,MS2PTStatusMask.UnTested,MS2PTStatusMask.RestTested,MS2PTStatusMask.PartTestWithRest,MS2PTStatusMask.PartTested,MS2PTStatusMask.PosTested],
-            ['SR3', MS3PTStatusMask.TCmissing,MS3PTStatusMask.NegTested,MS3PTStatusMask.UnTested,MS3PTStatusMask.RestTested,MS3PTStatusMask.PartTestWithRest,MS3PTStatusMask.PartTested,MS3PTStatusMask.PosTested],
-            ['SR4', MS4PTStatusMask.TCmissing,MS4PTStatusMask.NegTested,MS4PTStatusMask.UnTested,MS4PTStatusMask.RestTested,MS4PTStatusMask.PartTestWithRest,MS4PTStatusMask.PartTested,MS4PTStatusMask.PosTested],
+            ['Release', 'Test Case missing'  ,'negative tested'        ,'untested'              ,'partially tested with restrictions','tested with restrictions','part tested'             ,'positive tested'],
+            ['SR2', MS2PTStatusMask.TCmissing,MS2PTStatusMask.NegTested,MS2PTStatusMask.UnTested,MS2PTStatusMask.PartTestWithRest    ,MS2PTStatusMask.RestTested,MS2PTStatusMask.PartTested,MS2PTStatusMask.PosTested],
+            ['SR3', MS3PTStatusMask.TCmissing,MS3PTStatusMask.NegTested,MS3PTStatusMask.UnTested,MS3PTStatusMask.PartTestWithRest    ,MS3PTStatusMask.RestTested,MS3PTStatusMask.PartTested,MS3PTStatusMask.PosTested],
+            ['SR4', MS4PTStatusMask.TCmissing,MS4PTStatusMask.NegTested,MS4PTStatusMask.UnTested,MS4PTStatusMask.PartTestWithRest    ,MS4PTStatusMask.RestTested,MS4PTStatusMask.PartTested,MS4PTStatusMask.PosTested],
         ];
 
         var aggregates = ["State", "Release"];
