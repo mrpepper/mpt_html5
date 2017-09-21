@@ -295,20 +295,25 @@ function main(){
     //Generate Department Overview
     // ---------------------------------------------------------------------//
     function CountDepStrings(TestPF, SumObject){
-          retCode = 'false';
+
           if(TestPF !== '' && TestPF !== null && TestPF !== '\xa0'){ //\xa0 == &nbsp;
               //Split PFString if there is more than one TestPlatform: separated by: ,
-              var splitPFString = TestPF.split(',');
-              for (var i = 0; i < splitPFString.length; i++) {
-                  var cutPFString = splitPFString[i].split('-');
-                  DepartmentString = cutPFString[0].trim();
-                  if (DepartmentString in SumObject) {
-                      SumObject[DepartmentString]++;
-                  }
-                  else {
-                      SumObject[DepartmentString] = 1;
-                  }
-              }
+              var PFString = TestPF.split(',');
+              //only take the first part of the TestPF String and trim away the spaces eg.: "EEE"
+              PFString.forEach(function(element,ind,Array){
+                  var split = Array[ind].split("-");
+                  Array[ind] = split[0].trim();
+              });
+              //remove duplicates and write to new Array: uniqueNames
+              var uniqueElements = [];
+              PFString.forEach(function(element,ind,Array){
+                  if($.inArray(element, uniqueElements) === -1) uniqueElements.push(element);
+              });
+              //count the Department strings and write to SumObject
+              uniqueElements.forEach(function(element,ind,Array){
+                  if (element in SumObject) { SumObject[element]++; }
+                  else {SumObject[element] = 1; }
+              });
           }
           return SumObject;
     }
