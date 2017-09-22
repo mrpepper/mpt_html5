@@ -239,11 +239,13 @@ function main(){
             }
         }
         else if (removeIfNOTInDeleterArray == true){
+            var removedArray = [];
             for (var i in removefromArray){
-                if (deleterArray.indexOf(removefromArray[i]) == -1 ){
-                    removefromArray.splice(i,1);
+                if (deleterArray.indexOf(removefromArray[i]) > -1 ){
+                    removedArray.push(removefromArray[i]);
                 }
             }
+            removefromArray = removedArray;
         }
         return removefromArray;
     }
@@ -463,9 +465,10 @@ function main(){
             collectedTCTPFs = addtoArray(collectedTCTPFs, TCdata[i].TestPF);
         }
         //reduce Array by items from TPF selection from the menu
-        var redbySelction = reduceArray(collectedTCTPFs, selectedTestPlatforms,true);
+        var TCTPFredbySelection = reduceArray(collectedTCTPFs, selectedTestPlatforms,true);
+        var SOWTPFredbySelction = reduceArray(SOWTPFs,selectedTestPlatforms,true);
         //how many Testplatforms from SOW are not covered by Testplatforms from Testcase
-        var TPFsleft = reduceArray(redbySelction,SOWTPFs,false);
+        var TPFsleft = reduceArray(SOWTPFredbySelction,TCTPFredbySelection,false);
 
 
         //choose PT Generations to analyse, concerning the Requirement Milestone
