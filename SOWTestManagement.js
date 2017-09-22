@@ -139,6 +139,9 @@ function main(){
 
             row.setAttribute("class", "clickable-tr");
             row.setAttribute('href', ReqURL);
+            row.addEventListener("click",function(){
+                window.location.href = $(this).attr('href');
+            });
             rowData.forEach(function(cellData) {
                 var cell = document.createElement('td');
                 var context = getColor(cellData);
