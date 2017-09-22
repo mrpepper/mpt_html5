@@ -774,27 +774,27 @@ function main(){
     // ---------------------------------------------------------------------//
     // Coverage Chart
     // ---------------------------------------------------------------------//
-    google.charts.setOnLoadCallback(drawSOWCoverageChart);
-    function drawSOWCoverageChart(){
-
-        var data = google.visualization.arrayToDataTable([
-            ['Type', 'Count'],
-            ['Positive Tested and Tested with Restrictions', posSOWTestCoverage],
-            ['other states', SOWReqCount-posSOWTestCoverage]
-        ]);
-
-        var options = {
-            title: 'Test Coverage',
-            width: 400,
-            height: 400,
-            legend: { position: 'right',alignment: 'center', maxLines: 3 },
-            chartArea: {left:30, bottom:30},
-            colors: ['#109618', '#DC3912']
-        };
-
-        var chart = new google.visualization.PieChart(document.getElementById('SOWCoverageChart'));
-        chart.draw(data, options);
-    }
+    //google.charts.setOnLoadCallback(drawSOWCoverageChart);
+    //function drawSOWCoverageChart(){
+//
+    //    var data = google.visualization.arrayToDataTable([
+    //        ['Type', 'Count'],
+    //        ['Positive Tested and Tested with Restrictions', posSOWTestCoverage],
+    //        ['other states', SOWReqCount-posSOWTestCoverage]
+    //    ]);
+//
+    //    var options = {
+    //        title: 'Test Coverage',
+    //        width: 400,
+    //        height: 400,
+    //        legend: { position: 'right',alignment: 'center', maxLines: 3 },
+    //        chartArea: {left:30, bottom:30},
+    //        colors: ['#109618', '#DC3912']
+    //    };
+//
+    //    var chart = new google.visualization.PieChart(document.getElementById('SOWCoverageChart'));
+    //    chart.draw(data, options);
+    //}
 
 
 // ---------------------------------------------------------------------//
