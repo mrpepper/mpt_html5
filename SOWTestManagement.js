@@ -158,34 +158,34 @@ function main(){
     // ---------------------------------------------------------------------//
     function getColor(State){
         // States:  empty    ,TCmissing, UnTested , NegTested, RestTested, PartTested, PartTestWithRest, PosTested//
-        ////////////dblue    , red     , rose    ,orange   ,kaki     ,lgreen    ,dgreen
-        //colors : ['#3366CC','#DC3912','#DD4477','#FF9900','#AAAA11','#66AA00','#109618']
+        //////////redbrown , red     , rose    ,orange   ,kaki     ,lgreen    ,dgreen
+        colors : ['#8B0707','#DC3912','#DD4477','#F07336','#FF9900','#AB9808','#109618']
         var context = "";
         switch (State)
         {
             case 'TCmissing':
-                context = "#3366CC"; //blue
+                context = "#8B0707";
             break;
             case 'NegTested':
-                context = "#DC3912"; //red
+                context = "#DC3912";
             break;
             case 'UnTested':
-                context = "#DD4477"; //rose
+                context = "#DD4477";
             break;
             case 'PartTestWithRest':
-                context = "#FF9900"; //orange
+                context = "#F07336";
             break;
             case 'RestTested':
-                context = "#AAAA11"; //kaki
+                context = "#FF9900";
             break;
             case 'PartTested':
-                context = "#66AA00"; //lgreen
+                context = "#AB9808";
             break;
             case 'PosTested':
-                context = "#109618"; //dgreen
+                context = "#109618";
             break;
             default:
-                context = "#FFFFFF"; //white
+                context = "#FFFFFF";
             break;
         }
         return context;
@@ -1016,8 +1016,8 @@ function main(){
             legend: { position: 'right', alignment: 'center', maxLines: 6 },
             chartArea: {left:50, bottom:30, width:"70%", height:"70%"},
             bar: { groupWidth: '50%' },
-            //////////dblue    , red     , rose    ,orange   ,kaki     ,lgreen    ,dgreen
-            colors : ['#3366CC','#DC3912','#DD4477','#FF9900','#AAAA11','#66AA00','#109618']
+            //////////redbrown , red     , rose    ,orange   ,kaki     ,lgreen    ,dgreen
+            colors : ['#8B0707','#DC3912','#DD4477','#F07336','#FF9900','#AB9808','#109618']
             //isStacked: true
         };
 
