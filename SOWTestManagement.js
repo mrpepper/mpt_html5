@@ -539,6 +539,9 @@ function main(){
                             case 'PartTestWithRest':
                                 sumState = 'PartTestWithRest';
                             break;
+                            case 'RestTested':
+                                sumState = 'PartTestWithRest';
+                            break;
                             case 'UnTested':
                             case 'notRelevant':
                             default:
@@ -559,11 +562,14 @@ function main(){
                             default:
                                 sumState = 'PartTestWithRest';
                             break;
+                            case 'RestTested':
+                                sumState = 'RestTested';
+                            break;
                             case 'NegTested':
                                 sumState = 'NegTested'; //not relevant here could be removed?
                             break;
                             case 'notRelevant':
-                                sumState = 'UnTested';
+                                sumState = 'RestTested';
                             break;
                         }
                     break;
