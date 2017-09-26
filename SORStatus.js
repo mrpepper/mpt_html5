@@ -84,8 +84,8 @@ function main(){
     }
 
 
-    function handleLinkage(detailedWith){
-        if (detailedWith !== ''){
+    function handleLinkage(ReqState, detailedWith){
+        if (detailedWith !== '' && ReqState !== 'n/a'){
             hasLink++;
         }
     }
@@ -114,7 +114,7 @@ function main(){
                 var SORState = this.getElementsByClassName('State')[0].childNodes[0].nodeValue;
                 handleReqState(ReqState,ReqStateCustomer);
                 //handleReqStateCustomer(ReqStateCustomer,ReqState);
-                handleLinkage(detailedWith);
+                handleLinkage(ReqState,detailedWith);
             break;
 
             case 'platform_test_case':
@@ -145,7 +145,7 @@ function main(){
 // ---------------------------------------------------------------------//
     google.charts.setOnLoadCallback(drawReqStateChart);
     function drawReqStateChart(){
-    
+
         var data = google.visualization.arrayToDataTable([
             ['Type', 'Count'],
             ['All other states', ReqStateSum.all-ReqStateemptyopen],
@@ -170,7 +170,7 @@ function main(){
 // ---------------------------------------------------------------------//
     google.charts.setOnLoadCallback(drawReqStateCustomerChart);
     function drawReqStateCustomerChart(){
-    
+
         var data = google.visualization.arrayToDataTable([
             ['Type', 'Count'],
             ['Rating accepted', ReqStateCustomerSum.Ratingaccepted],
@@ -195,11 +195,11 @@ function main(){
 // ---------------------------------------------------------------------//
     google.charts.setOnLoadCallback(drawLinkageStatusChart);
     function drawLinkageStatusChart(){
-    
+
         var data = google.visualization.arrayToDataTable([
             ['Type', 'Count'],
             ['with Link', hasLink],
-            ['no link', ReqStateSum.all-hasLink]
+            ['no link', ReqStateSum.all-hasLink-ReqStateSum.na]
         ]);
 
         var options = {
