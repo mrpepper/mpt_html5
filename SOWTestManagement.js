@@ -213,15 +213,16 @@ function main(){
     // ---------------------------------------------------------------------//
     function checkSILString(SILString){
         var retCode = 'false';
+        splitSILString = SILString.split('(')[0];
         if (selectedSILrelevant == '-All-'){
             retCode = 'valid'
         }
         else if (selectedSILrelevant == 'Safety Relevant') {
-            if (SILString !== 'QM' && SILString !== 'No' && SILString !== '\xa0' && SILString !== '' ){
+            if (splitSILString !== 'QM' && splitSILString !== 'No' && splitSILString !== '\xa0' && splitSILString !== '' ){
                 retCode = 'valid';
             }
         }
-        else if (selectedSILrelevant == 'QM' && SILString == 'QM'){
+        else if (selectedSILrelevant == 'QM' && splitSILString == 'QM'){
                 retCode = 'valid';
         }
         return retCode;
@@ -424,6 +425,11 @@ function main(){
         if (PTSum == 'TCmissing'){
             switch (slicedReqMS)
             {
+                case '\xa0':
+                    MS2PTStatusMask.TCmissing++;
+                    MS3PTStatusMask.TCmissing++;
+                    MS4PTStatusMask.TCmissing++;
+                break;
                 case 'MS2':
                     MS2PTStatusMask.TCmissing++;
                     MS3PTStatusMask.TCmissing++;
@@ -488,6 +494,10 @@ function main(){
             case 'MS4':
                 //PTGens = ['PVSState'];
                 PTGenCount = 2;
+            break;
+            default:
+                //PTGens = ['PT1State', 'PT2State', 'PVSState'];
+                PTGenCount = 0;
             break;
         }
 
@@ -638,6 +648,11 @@ function main(){
         var slicedReqMS = ReqMS.substring(0,3);
         switch (slicedReqMS)
         {
+            case '\xa0':
+                PTSumState.PT1State = "TCmissing";
+                PTSumState.PT2State = "TCmissing";
+                PTSumState.PVSState = "TCmissing";
+            break;
             case 'MS2':
                 PTSumState.PT1State = "TCmissing";
                 PTSumState.PT2State = "TCmissing";
