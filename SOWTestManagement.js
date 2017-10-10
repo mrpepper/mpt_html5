@@ -512,7 +512,7 @@ function main(){
             }
             if (count == 3){
                 for (var k in Gens){
-                    if(TCdata[i].TCState == 'TC New' || TCdata[i].TCState == 'TC Specified' || TCdata[i].TCState == 'TC on Work' || TCdata[i].TCState == 'TC Retest'){
+                    if(TCdata[i].TCState == 'TC New' || TCdata[i].TCState == 'TC Specified' || TCdata[i].TCState == 'TC In Work' || TCdata[i].TCState == 'TC Retest'){
                         TCdata[i][Gens[k]] = 'TC to Verify';
                     } else {
                         TCdata[i][Gens[k]] = TCdata[i].TCState;
