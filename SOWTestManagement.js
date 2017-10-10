@@ -587,9 +587,32 @@ function main(){
                         }
                     break;
                     case 'TC Completed':
-                        //in case only one TC attached and positive
-                        if (sumState == 'notRelevant') {
-                            sumState = 'PosTested';
+                    switch (sumState)
+                        {
+                            case 'PosTested':
+                                sumState = 'PosTested';
+                            break;
+                            case 'PartTested':
+                                sumState = 'PartTested';
+                            break;
+                            case 'PartTestWithRest':
+                                sumState = 'PartTestWithRest';
+                            break;
+                            case 'RestTested':
+                                sumState = 'RestTested';
+                            break;
+                            case 'NegTested':
+                            sumState = 'NegTested';
+                            break;
+                            case 'UnTested':
+                                sumState = 'PartTested';
+                            break;
+                            case 'notRelevant': //in case only one TC attached and positive
+                                sumState = 'PosTested';
+                            break;
+                            default:
+                                sumState = 'NegTested';
+                            break;
                         }
                     break;
                     case 'TC Failed':
