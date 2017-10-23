@@ -50,9 +50,18 @@ function main(){
         }
     }
 
-    function handleLinkage(detailedWith){
-        if (detailedWith !== ''){
-            hasLink++;
+    function handleLinkage(detailedWith, AffectedSystemComp){
+        var splitAFSC= AffectedSystemComp.split(',');
+        var SWavailable = false;
+        splitAFSC.forEach(function(element,ind,Array){
+            if(Array[ind].trim() == "Software (SW)"){
+                SWavailable = true;
+            }
+        });
+        if(SWavailable == true){
+            if (detailedWith !== ''){
+                hasLink++;
+            }
         }
     }
 
@@ -74,6 +83,7 @@ function main(){
         var Milestone = $(this).find('td.Milestone').text();
         var detailedWith = $(this).find('td.Detailed').text();
         var ReqState = $(this).find('td.State').text();
+        var AffectedSystemComp = $(this).find('td.Affected').text();
 
 
         switch($(this).attr('class'))
@@ -84,7 +94,7 @@ function main(){
 
             case 'scr':
                 handleReqState(ReqState, Milestone);
-                handleLinkage(detailedWith, Milestone);
+                handleLinkage(detailedWith, AffectedSystemComp);
                 handleMilestone(Milestone);
                 SumReqCount++;
             break;
@@ -120,7 +130,7 @@ function main(){
 // ---------------------------------------------------------------------//
     google.charts.setOnLoadCallback(drawStatesforMilestones);
     function drawStatesforMilestones(){
-    
+
         var data = google.visualization.arrayToDataTable([
             ['Release', 'other States', 'Requirement Specified', 'Requirement Implemented'],
             ['MS2',MS2ReqStateSum.others, MS2ReqStateSum.ReqSpecified,MS2ReqStateSum.ReqImplemented],
@@ -148,7 +158,7 @@ function main(){
 // ---------------------------------------------------------------------//
     google.charts.setOnLoadCallback(drawMilestoneChart);
     function drawMilestoneChart(){
-    
+
         var data = google.visualization.arrayToDataTable([
             ['Type', 'Count'],
             ['is planned', hasMilestone],
@@ -173,7 +183,7 @@ function main(){
 // ---------------------------------------------------------------------//
     google.charts.setOnLoadCallback(drawLinkageStatusChart);
     function drawLinkageStatusChart(){
-    
+
         var data = google.visualization.arrayToDataTable([
             ['Type', 'Count'],
             ['with Link', hasLink],
@@ -181,7 +191,7 @@ function main(){
         ]);
 
         var options = {
-            title: 'SOWs considered',
+            title: 'Software SOWs considered',
             width: 500,
             height: 300,
             legend: { position: 'right', alignment: 'center', maxLines: 6 },
@@ -197,7 +207,7 @@ function main(){
 // ---------------------------------------------------------------------//
     google.charts.setOnLoadCallback(drawReqStateChart);
     function drawReqStateChart(){
-    
+
         var data = google.visualization.arrayToDataTable([
             ['Type', 'Count'],
             ['Requirement Specified or Implemented', ReqSpecImpl],
