@@ -54,7 +54,7 @@ $(document).ready(function() {
 
     });
     var DocSubject = $.map(Documents, function(value, index) {
-        	return [value.Subject];
+        	return [value.Subject.concat(" * ").concat(value.DocID)];
     });
     addToSelector('selected_Documents', DocSubject);
     $("#selected_Documents").selectpicker('val', DocSubject);
