@@ -137,14 +137,18 @@ function main(){
             var IntegrityURL = "integrity://lanwinsvmks1.eu.adglob.net:8001/im/viewissue?selection=";
             var ReqURL = IntegrityURL.concat(rowData[0]);
 
-            row.setAttribute("class", "clickable-tr");
-            row.setAttribute('href', ReqURL);
-            row.addEventListener("click",function(){
-                window.location.href = $(this).attr('href');
-            });
-            rowData.forEach(function(cellData) {
+            rowData.forEach(function(cellData,index) {
                 var cell = document.createElement('td');
                 var context = getColor(cellData);
+                if(index == '0'){
+                    cell.setAttribute("class", "clickable-tr");
+                    cell.style.color = "blue";
+                    cell.style.textDecoration  = "underline";
+                    cell.setAttribute('href', ReqURL);
+                    cell.addEventListener("click",function(){
+                        window.location.href = $(this).attr('href');
+                    });
+                }
                 cell.setAttribute("bgcolor",context);
                 cell.appendChild(document.createTextNode(cellData));
                 row.appendChild(cell);
