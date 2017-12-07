@@ -164,8 +164,8 @@ function main(Documents){
     // ---------------------------------------------------------------------//
     // handle Status of Requirements
     // ---------------------------------------------------------------------//
-    function countStatus(detailedWith, details, ReviewDone, Type, DocID, SumObject){
-        var DocumentState = {DocID:0, DocName:0, ReqWithParent:0, ReqWithOutParent:0, ReqWithChild:0, ReqWithOutChild:0, ReqWithReview:0, ReqWithOutReview:0,others:0};
+    function countStatus(detailedWith, details, ReviewDone, TestIssues, Type, DocID, SumObject){
+        var DocumentState = {DocID:0, DocName:0, ReqWithParent:0, ReqWithOutParent:0, ReqWithChild:0, ReqWithOutChild:0, ReqWithReview:0, ReqWithOutReview:0,ReqWithTestCase:0,ReqWithOutTestCase:0};
         var avialable = false;
         var count = 0;
 
@@ -196,6 +196,11 @@ function main(Documents){
                 SumObject[count].ReqWithOutReview++;
             }
 
+            if(TestIssues !== '' && TestIssues !== null && TestIssues !== '\xa0'){
+                SumObject[count].ReqWithTestCase++;
+            } else {
+                SumObject[count].ReqWithOutTestCase++;
+            }
         }
         else
         {
@@ -216,6 +221,12 @@ function main(Documents){
                 DocumentState.ReqWithReview = 1;
             } else {
                 DocumentState.ReqWithOutReview = 0;
+            }
+
+            if(TestIssues !== '' && TestIssues !== null && TestIssues !== '\xa0'){
+                DocumentState.ReqWithTestCase = 1;
+            } else {
+                DocumentState.ReqWithOutTestCase = 0;
             }
             SumObject.push(DocumentState);
         }
@@ -305,7 +316,7 @@ function main(Documents){
         var DocID = $(this).find('td.Document').text();
         var TestIssues = $(this).find('td.Test').text();
         var Subject = $(this).find('td.Subject').text();
-        //var validDocument = checkString(Subject,selectedDocuments);
+        var validDocument = checkString(DocID, selectedDocuments);
 
 
         switch($(this).attr('class'))
