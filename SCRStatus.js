@@ -326,12 +326,16 @@ function main(Documents){
             break;
 
             case 'item':
-                ReqID = this.getElementsByClassName('ID')[1].childNodes[0].nodeValue;
-                if(Type == "SOW Requirement" || Type == "System Component Requirement"){
+                ItemID = this.getElementsByClassName('ID')[1].childNodes[0].nodeValue;
+                if(validDocument == 'valid' && (Type == "SOW Requirement" || Type == "System Component Requirement")){
                     ReqStatus = handleReqStatus(details, detailedWith, ReviewDone, TestIssues);
-                    RequirementsStatusCount = countStatus(detailedWith, details, ReviewDone, Type, DocID, RequirementsStatusCount);
+                    RequirementsStatusCount = countStatus(detailedWith, details, ReviewDone, TestIssues, Type, DocID, RequirementsStatusCount);
                     //var headingData = ['ID', 'Subject', 'Document ID', 'has Parent', 'has Child', 'has Review', 'has link to Test Case'];
-                    OverviewTable.push([ReqID, Subject, DocID, ReqStatus.Parents, ReqStatus.Childs, ReqStatus.Reviews, ReqStatus.Tests]);
+                    OverviewTable.push([ItemID, Subject, DocID, ReqStatus.Parents, ReqStatus.Childs, ReqStatus.Reviews, ReqStatus.Tests]);
+                }
+                if(Type == "System Component Requirement Document" || Type == "SOW Requirement Document"){
+                    DocumentSubjects = AddDocumentSub(ItemID, Subject, DocumentSubjects);
+
                 }
                 //handleReqState(ReqState, Milestone);
                 //handleMilestone(Milestone);
@@ -378,17 +382,17 @@ function main(Documents){
 
         var dataTable = new google.visualization.DataTable()
         dataTable.addColumn('string', 'Document');
-        dataTable.addColumn('number', 'with Parents');
-        dataTable.addColumn('number', 'without Parents');
+        dataTable.addColumn('number', 'with');
+        dataTable.addColumn('number', 'without');
         dataTable.addRows(TableArray);
         var view = new google.visualization.DataView(dataTable);
 
         var options = {
             title: 'Requirements Parents',
-            width: 500,
-            height: 800,
+            width: 300,
+            height: 500,
             legend: { position: 'top', alignment: 'center', maxLines: 3 },
-            chartArea: {left:100, bottom: 200, width:"80%"},
+            chartArea: {left:100, bottom: 110, width:"80%"},
             bar: { groupWidth: '80%' },
             colors: ['#109618','#B82E2E','#FF9900'],
             hAxis: {
@@ -415,17 +419,17 @@ function main(Documents){
 
             var dataTable = new google.visualization.DataTable()
             dataTable.addColumn('string', 'Document');
-            dataTable.addColumn('number', 'with Childs');
-            dataTable.addColumn('number', 'without Childs');
+            dataTable.addColumn('number', 'with');
+            dataTable.addColumn('number', 'without');
             dataTable.addRows(TableArray);
             var view = new google.visualization.DataView(dataTable);
 
             var options = {
                 title: 'Requirements Childs',
-                width: 500,
-                height: 800,
+                width: 300,
+                height: 500,
                 legend: { position: 'top', alignment: 'center', maxLines: 3 },
-                chartArea: {left:100, bottom: 200, width:"80%"},
+                chartArea: {left:100, bottom: 110, width:"80%"},
                 bar: { groupWidth: '80%' },
                 colors: ['#109618','#B82E2E','#FF9900'],
                 //isStacked: true
@@ -451,17 +455,17 @@ function main(Documents){
 
             var dataTable = new google.visualization.DataTable()
             dataTable.addColumn('string', 'Document');
-            dataTable.addColumn('number', 'with Review');
-            dataTable.addColumn('number', 'without Review');
+            dataTable.addColumn('number', 'with');
+            dataTable.addColumn('number', 'without');
             dataTable.addRows(TableArray);
             var view = new google.visualization.DataView(dataTable);
 
             var options = {
                 title: 'Requirements Reviews',
-                width: 500,
-                height: 800,
+                width: 300,
+                height: 500,
                 legend: { position: 'top', alignment: 'center', maxLines: 3 },
-                chartArea: {left:100, bottom: 200, width:"80%"},
+                chartArea: {left:100, bottom: 110, width:"80%"},
                 bar: { groupWidth: '80%' },
                 colors: ['#109618','#B82E2E','#FF9900'],
                 //isStacked: true
@@ -474,4 +478,40 @@ function main(Documents){
             var chart = new google.visualization.ColumnChart(document.getElementById('StatesforReviews'));
             chart.draw(view, options);
         }
+        // ---------------------------------------------------------------------//
+        // Review Chart
+        // ---------------------------------------------------------------------//
+                google.charts.setOnLoadCallback(drawStatesforTests);
+                function drawStatesforTests(){
+                    var TableArray = [];
+
+                    for (var i = 0; i < RequirementsStatusCount.length; i++) {
+                        TableArray.push([RequirementsStatusCount[i].DocName,RequirementsStatusCount[i].ReqWithTestCase, RequirementsStatusCount[i].ReqWithOutTestCase]);
+                    }
+
+                    var dataTable = new google.visualization.DataTable()
+                    dataTable.addColumn('string', 'Document');
+                    dataTable.addColumn('number', 'with');
+                    dataTable.addColumn('number', 'without');
+                    dataTable.addRows(TableArray);
+                    var view = new google.visualization.DataView(dataTable);
+
+                    var options = {
+                        title: 'Requirements Test Case',
+                        width: 300,
+                        height: 500,
+                        legend: { position: 'top', alignment: 'center', maxLines: 3 },
+                        chartArea: {left:100, bottom: 110, width:"80%"},
+                        bar: { groupWidth: '80%' },
+                        colors: ['#109618','#B82E2E','#FF9900'],
+                        //isStacked: true
+                        hAxis: {
+                            direction: -1,
+                            slantedText: true,
+                            slantedTextAngle: 60 // here you can even use 180
+                        }
+                    };
+                    var chart = new google.visualization.ColumnChart(document.getElementById('StatesforTests'));
+                    chart.draw(view, options);
+                }
 }
