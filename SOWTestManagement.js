@@ -565,7 +565,7 @@ function main(){
                             break;
                         }
                     break;
-                    case 'TC Completed with Restriction':
+                    case 'TC Completed with restriction':
                         switch (sumState)
                         {
                             case 'PosTested':
