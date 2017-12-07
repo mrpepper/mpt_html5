@@ -71,6 +71,7 @@ function main(Documents){
     var RequirementsStatusCount = [];
     var ReqStatus = {};
     var OverviewTable = [];
+    var DocumentSubjects = [];
     var selectedDocuments = $( "#selected_Documents" ).val();
 
     // ---------------------------------------------------------------------//
@@ -226,7 +227,7 @@ function main(Documents){
             for (var j = 0; j < Documents.length; j++) {
                 if (RequirementsStatusCount[i].DocID == Documents[j].DocID)
                 {
-                    RequirementsStatusCount[i].DocName = Documents[j].Subject;
+                    RequirementsStatusCount[i].DocName = Documents[j].DocName;
                 }
             }
         }
@@ -250,6 +251,44 @@ function main(Documents){
             ReqStatus.Tests = "yes";
         }
         return ReqStatus;
+    }
+    // ---------------------------------------------------------------------//
+    // check if String is equal to selection
+    // ---------------------------------------------------------------------//
+    function checkString(String,SelectedValue){
+        var retCode = 'false';
+        var DocIDs = [];
+
+        for (var i in SelectedValue) {
+            var split = SelectedValue[i].split("*");
+            var trim = split[1].trim();
+            DocIDs.push(trim);
+        }
+
+        for (var i in DocIDs){
+            if(DocIDs.indexOf(String.trim()) > -1){
+                retCode = 'valid';
+            }
+        }
+        return retCode;
+    }
+
+    // ---------------------------------------------------------------------//
+    // collect Document Subjects
+    // ---------------------------------------------------------------------//
+    function AddDocumentSub(DocID, Subject, DocumentSubjects){
+        var available = false;
+        var Info = {DocID:0, DocName:0};
+
+        if(DocumentSubjects.indexOf(Subject) > -1){
+            available = true;
+        }
+        if(!available){
+            Info.DocID = DocID;
+            Info.DocName = Subject;
+            DocumentSubjects.push(Info);
+        }
+        return DocumentSubjects;
     }
 
 // ---------------------------------------------------------------------//
@@ -300,15 +339,7 @@ function main(Documents){
 // general Calculations
 // ---------------------------------------------------------------------//
 
-    AddDocNames(RequirementsStatusCount, Documents);
-
-    //var availableDocuments = [];
-    //for (var i = 0; i < Documents.length; i++) {
-    //    availableDocuments.push(Documents[i].Subject);
-    //}
-//
-    //addToSelector('selected_Documents', availableDocuments);
-    //$("#selected_Documents").selectpicker('val', availableDocuments);
+    AddDocNames(RequirementsStatusCount, DocumentSubjects);
 
     function Comparator(a, b) {
         if (a[2] < b[2]) return -1;
