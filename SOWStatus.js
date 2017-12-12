@@ -11,6 +11,7 @@ function main(){
     var MS2ReqStateSum = {all:0, ReqImplemented:0, ReqSpecified:0, others:0};
     var MS3ReqStateSum = {all:0, ReqImplemented:0, ReqSpecified:0, others:0};
     var MS4ReqStateSum = {all:0, ReqImplemented:0, ReqSpecified:0, others:0};
+    var notSW = 0;
     var hasLink = 0;
     var hasMilestone = 0;
     var SumReqCount = 0;
@@ -61,7 +62,10 @@ function main(){
         if(SWavailable == true){
             if (detailedWith !== ''){
                 hasLink++;
+                console.log(AffectedSystemComp, hasLink)
             }
+        } else {
+            notSW++;
         }
     }
 
@@ -187,7 +191,7 @@ function main(){
         var data = google.visualization.arrayToDataTable([
             ['Type', 'Count'],
             ['with Link', hasLink],
-            ['no link', SumReqCount-hasLink]
+            ['no link', SumReqCount - notSW - hasLink]
         ]);
 
         var options = {
