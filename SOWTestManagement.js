@@ -1,7 +1,6 @@
 $(document).ready(function() {
     var availableTestPlatforms = [];
-    var availableVariants = [];
-    var availableCustomer = [];
+    var availablePriorities = [];
 
     // ---------------------------------------------------------------------//
     // generate List of Items
@@ -26,14 +25,14 @@ $(document).ready(function() {
     // ---------------------------------------------------------------------//
     // append List of available Items to HTML selector
     // ---------------------------------------------------------------------//
-    function addToSelector(Selector,Variants){
-        for (var i = 0; i < Variants.length; i++) {
-            Variants.sort();
+    function addToSelector(Selector,Priorities){
+        for (var i = 0; i < Priorities.length; i++) {
+            Priorities.sort();
             //append options to HTML selector for TestPlatforms
             var sel = document.getElementById(Selector);
             var opt = document.createElement('option');
-            opt.innerHTML = Variants[i];
-            opt.value = Variants[i];
+            opt.innerHTML = Priorities[i];
+            opt.value = Priorities[i];
             sel.appendChild(opt);
         }
     }
@@ -43,19 +42,17 @@ $(document).ready(function() {
     // ---------------------------------------------------------------------//
     $('tbody tr').each(function() {
         var TestPlatform = $(this).find('td.Affected').text(); //Affected Test Platforms
-        var Variants = $(this).find('td.Variant').text(); //Variants
-        var Customer = $(this).find('td.Customer').text(); //Variants
+        var Priority = $(this).find('td.Priority').text(); //Priority
+
         aquireStrings(TestPlatform,availableTestPlatforms);
-        aquireStrings(Variants,availableVariants);
-        aquireStrings(Customer,availableCustomer);
+        aquireStrings(Priority,availablePriorities);
+
     });
 
     addToSelector('selected_Test_Platforms', availableTestPlatforms);
     $("#selected_Test_Platforms").selectpicker('val', availableTestPlatforms);
-    addToSelector('selected_Variant', availableVariants);
-    $("#selected_Variant").selectpicker('val', availableVariants);
-    addToSelector('selected_Customer', availableCustomer);
-    $("#selected_Customer").selectpicker('val', availableCustomer);
+    addToSelector('selected_Priority', availablePriorities);
+    $("#selected_Priority").selectpicker('val', availablePriorities);
     main();
 
 });
@@ -79,7 +76,7 @@ function main(){
     var activeReq = false;
     var SOWid = 0;
     var SOWAffectedTestPlatforms = '';
-    var SOWVariant = '';
+    var SOWPriority = '';
     var ProjTCTestPlatform = '';
     var AllStatusMask = {TCmissing:0,UnTested:0,NegTested:0,RestTested:0,PartTested:0,PartTestWithRest:0,PosTested:0};
     var MS2StatusMask = {TCmissing:0,UnTested:0,NegTested:0,RestTested:0,PartTested:0,PartTestWithRest:0,PosTested:0};
@@ -97,8 +94,7 @@ function main(){
     var allTestState = [];
     var selectedTestPlatforms = $( "#selected_Test_Platforms" ).val();
     var selectedSILrelevant = $( "#selected_SIL_relevant" ).val();
-    var selectedVariants = $( "#selected_Variant" ).val();
-    var selectedCustomer = $( "#selected_Customer" ).val();
+    var selectedPriority = $( "#selected_Priority" ).val();
     var OverviewTable = [];
     var SOWSubject = '';
     var SOWSIL = '';
@@ -109,7 +105,7 @@ function main(){
     // create Table
     // ---------------------------------------------------------------------//
     function createTable(tableData) {
-        var headingData = ['ID', 'Subject', 'Milestone', 'SIL', 'SR2 Test State', 'SR3 Test State', 'SR4 Test State','Test Platforms','Variant'];
+        var headingData = ['ID', 'Subject', 'Milestone', 'SIL', 'SR2 Test State', 'SR3 Test State', 'SR4 Test State','Test Platforms','Priority'];
         //remove preveous table
         $("#OverviewTable").remove();
         //create the new table
@@ -708,12 +704,10 @@ function main(){
         var PVSState = $(this).find('td.State.PVS').text();
         var TestPlatformOfReq = $(this).find('td.Affected').text(); //Affected Test Platforms
         var validTPF = checkString(TestPlatformOfReq,selectedTestPlatforms);
-        var VariantOfReq = $(this).find('td.Variant').text(); //Affected Test Platforms
-        var validVariant = checkString(VariantOfReq,selectedVariants);
+        var PriorityOfReq = $(this).find('td.Priority').text(); //Priority
+        var validPriority = checkString(PriorityOfReq,selectedPriority);
         var SILLevelofReq = $(this).find('td.SIL').text();
         var validSILReq = checkSILString(SILLevelofReq);
-        var CustomerOfReq = $(this).find('td.Customer').text(); //Affected Test Platforms
-        var validCustomer = checkString(CustomerOfReq,selectedCustomer);
 
         switch($(this).attr('class'))
         {
@@ -727,7 +721,7 @@ function main(){
 
                     //generate DepartmentOverview
                     DepartmentOverview = CountDepStrings(SOWAffectedTestPlatforms, DepartmentOverview);
-                    OverviewTable.push([SOWid, SOWSubject, ReqMilestone, SOWSIL, PTSumState.PT1State , PTSumState.PT2State, PTSumState.PVSState,SOWAffectedTestPlatforms, SOWVariant]);
+                    OverviewTable.push([SOWid, SOWSubject, ReqMilestone, SOWSIL, PTSumState.PT1State , PTSumState.PT2State, PTSumState.PVSState,SOWAffectedTestPlatforms, SOWPriority]);
                 }
                 else if (activeReq && activeTC){
                     //console.log('SOWTPF:', SOWAffectedTestPlatforms,' ProjTC:',ProjTCTestPlatform,');
@@ -741,7 +735,7 @@ function main(){
 
                     //generate DepartmentOverview
                     DepartmentOverview = CountDepStrings(SOWAffectedTestPlatforms, DepartmentOverview);
-                    OverviewTable.push([SOWid, SOWSubject, ReqMilestone, SOWSIL, PTSumState.PT1State , PTSumState.PT2State, PTSumState.PVSState,SOWAffectedTestPlatforms, SOWVariant]);
+                    OverviewTable.push([SOWid, SOWSubject, ReqMilestone, SOWSIL, PTSumState.PT1State , PTSumState.PT2State, PTSumState.PVSState,SOWAffectedTestPlatforms, SOWPriority]);
                     //console.log('SOW ID:', SOWid, '| PT State:',PTSumState );
                     //console.log('-------------------------------------------------------------------');
                 }
@@ -754,18 +748,18 @@ function main(){
             break;
 
             case 'sow':
-                if(Type == 'SOW Requirement' && validTPF == 'valid' && validSILReq == 'valid' && validVariant == 'valid' && validCustomer == 'valid') {
+                if(Type == 'SOW Requirement' && validTPF == 'valid' && validSILReq == 'valid' && validPriority == 'valid') {
                     activeReq = true;
                     SOWid = this.getElementsByClassName('ID')[1].childNodes[0].nodeValue;
                     SOWAffectedTestPlatforms = this.getElementsByClassName('Affected')[0].childNodes[0].nodeValue;
                     SOWSubject = this.getElementsByClassName('Subject')[0].childNodes[0].nodeValue;
-                    SOWVariant = this.getElementsByClassName('Variant')[0].childNodes[0].nodeValue;
+                    SOWPriority = this.getElementsByClassName('Priority')[0].childNodes[0].nodeValue;
 
                     ReqMilestone = Milestone;
                     SOWReqCount++;
                     SOWSIL = SILLevelofReq;
                     //var SOWState = this.getElementsByClassName('State')[0].childNodes[0].nodeValue;
-                    //console.log('SOWID:', SOWid, 'Planned for:', ReqMilestone, 'AffectedTPFs:', SOWAffectedTestPlatforms, 'Variant', SOWVariant);
+                    //console.log('SOWID:', SOWid, 'Planned for:', ReqMilestone, 'AffectedTPFs:', SOWAffectedTestPlatforms, 'Variant', SOWPriority);
                     //console.log('-------------------------------------------------------------------');
                 }
                 else if (Type == 'Test Case'){
@@ -1052,9 +1046,9 @@ function main(){
 
         var data = [
             ['Release', 'Test Case missing'  ,'negative tested'        ,'untested'              ,'partially tested with restrictions','tested with restrictions','part tested'             ,'positive tested'],
-            ['SR2', MS2PTStatusMask.TCmissing,MS2PTStatusMask.NegTested,MS2PTStatusMask.UnTested,MS2PTStatusMask.PartTestWithRest    ,MS2PTStatusMask.RestTested,MS2PTStatusMask.PartTested,MS2PTStatusMask.PosTested],
-            ['SR3', MS3PTStatusMask.TCmissing,MS3PTStatusMask.NegTested,MS3PTStatusMask.UnTested,MS3PTStatusMask.PartTestWithRest    ,MS3PTStatusMask.RestTested,MS3PTStatusMask.PartTested,MS3PTStatusMask.PosTested],
-            ['SR4', MS4PTStatusMask.TCmissing,MS4PTStatusMask.NegTested,MS4PTStatusMask.UnTested,MS4PTStatusMask.PartTestWithRest    ,MS4PTStatusMask.RestTested,MS4PTStatusMask.PartTested,MS4PTStatusMask.PosTested],
+            ['SF2', MS2PTStatusMask.TCmissing,MS2PTStatusMask.NegTested,MS2PTStatusMask.UnTested,MS2PTStatusMask.PartTestWithRest    ,MS2PTStatusMask.RestTested,MS2PTStatusMask.PartTested,MS2PTStatusMask.PosTested],
+            ['SF3', MS3PTStatusMask.TCmissing,MS3PTStatusMask.NegTested,MS3PTStatusMask.UnTested,MS3PTStatusMask.PartTestWithRest    ,MS3PTStatusMask.RestTested,MS3PTStatusMask.PartTested,MS3PTStatusMask.PosTested],
+            ['SF4', MS4PTStatusMask.TCmissing,MS4PTStatusMask.NegTested,MS4PTStatusMask.UnTested,MS4PTStatusMask.PartTestWithRest    ,MS4PTStatusMask.RestTested,MS4PTStatusMask.PartTested,MS4PTStatusMask.PosTested],
         ];
 
         var aggregates = ["State", "Release"];
