@@ -105,9 +105,10 @@ function main(){
     // create Table
     // ---------------------------------------------------------------------//
     function createTable(tableData) {
-        var headingData = ['ID', 'Subject', 'Milestone', 'SIL', 'SR2 Test State', 'SR3 Test State', 'SR4 Test State','Test Platforms','Priority'];
+        var headingData = ['ID', 'Subject', 'Milestone', 'SIL', 'SF2 Test State', 'SF3 Test State', 'SF4 Test State','Test Platforms','Priority'];
         //remove preveous table
         $("#OverviewTable").remove();
+        $("#OverviewTable_wrapper").remove();
         //create the new table
         var table = document.createElement('table');
         table.setAttribute("class", "table table-hover");
@@ -120,7 +121,7 @@ function main(){
         var HeadingRow = document.createElement('tr');
         HeadingRow.setAttribute("class", "active");
         headingData.forEach(function(data) {
-            var cell = document.createElement('td');
+            var cell = document.createElement('th');
             cell.appendChild(document.createTextNode(data));
             HeadingRow.appendChild(cell);
             tableHead.appendChild(HeadingRow);
@@ -155,6 +156,8 @@ function main(){
         table.appendChild(tableHead);
         table.appendChild(tableBody);
         document.getElementById("TableContainer").appendChild(table);
+        $('#OverviewTable').DataTable({ paging: false});
+        document.getElementById("TableContainer").setAttribute("class", "collapse");
     }
     // ---------------------------------------------------------------------//
     // get Color
