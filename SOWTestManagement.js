@@ -99,6 +99,7 @@ function main(){
     var SOWSubject = '';
     var SOWSIL = '';
     var DepartmentOverview = {};
+    var DepartmentStateOverviewPVS = {};
 
 
     // ---------------------------------------------------------------------//
@@ -113,7 +114,7 @@ function main(){
         var table = document.createElement('table');
         table.setAttribute("class", "table table-hover");
         table.setAttribute("id", "OverviewTable");
-        table.setAttribute("hidden", "true");
+        //table.setAttribute("hidden", "true");
 
         // Table Heading
         var tableHead = document.createElement('thead');
@@ -303,7 +304,7 @@ function main(){
     // ---------------------------------------------------------------------//
     //Generate Department Overview
     // ---------------------------------------------------------------------//
-    function CountDepStrings(TestPF, SumObject){
+    function CountDepStrings(TestPF, SumObject, PTStates){
 
           if(TestPF !== '' && TestPF !== null && TestPF !== '\xa0'){ //\xa0 == &nbsp;
               //Split PFString if there is more than one TestPlatform: separated by: ,
@@ -320,11 +321,31 @@ function main(){
               });
               //count the Department strings and write to SumObject
               uniqueElements.forEach(function(element,ind,Array){
-                  if (element in SumObject) { SumObject[element]++; }
-                  else {SumObject[element] = 1; }
+                  if (element in SumObject) {SumObject[element]++;}
+                  else {SumObject[element] = 1;}
               });
+
+            //count Department States
+            for (var i = 0; i < uniqueElements.length; i++) {
+                 if(uniqueElements[i] in DepartmentStateOverviewPVS){
+                     DepartmentStateOverviewPVS = handleDepartmentStates(false,DepartmentStateOverviewPVS, uniqueElements[i],PTStates);
+                 } else {
+                     DepartmentStateOverviewPVS = handleDepartmentStates(true,DepartmentStateOverviewPVS, uniqueElements[i],PTStates);
+                 }
+            }
           }
           return SumObject;
+    }
+    function handleDepartmentStates(init, DepartmentStateOverviewPVS, uniqueElement,PTStates){
+        var PTStatusMask = {TCmissing:0,UnTested:0,NegTested:0,RestTested:0,PartTested:0,PartTestWithRest:0,PosTested:0};
+        if (init){
+            DepartmentStateOverviewPVS[uniqueElement] = PTStatusMask;
+        }
+        //DepartmentStateOverview[uniqueElement][PTStates.PT1State]++;
+        //DepartmentStateOverview[uniqueElement][PTStates.PT2State]++;
+        DepartmentStateOverviewPVS[uniqueElement][PTStates.PVSState]++;
+
+        return DepartmentStateOverviewPVS;
     }
     // ---------------------------------------------------------------------//
     // Handling Test States
@@ -723,7 +744,7 @@ function main(){
                     //console.log('-------------------------------------------------------------------');
 
                     //generate DepartmentOverview
-                    DepartmentOverview = CountDepStrings(SOWAffectedTestPlatforms, DepartmentOverview);
+                    DepartmentOverview = CountDepStrings(SOWAffectedTestPlatforms, DepartmentOverview, PTSumState);
                     OverviewTable.push([SOWid, SOWSubject, ReqMilestone, SOWSIL, PTSumState.PT1State , PTSumState.PT2State, PTSumState.PVSState,SOWAffectedTestPlatforms, SOWPriority]);
                 }
                 else if (activeReq && activeTC){
@@ -737,7 +758,7 @@ function main(){
                     var PTSumState = handleTCPTStates(ReqMilestone, SOWAffectedTestPlatforms, allTCdata);
 
                     //generate DepartmentOverview
-                    DepartmentOverview = CountDepStrings(SOWAffectedTestPlatforms, DepartmentOverview);
+                    DepartmentOverview = CountDepStrings(SOWAffectedTestPlatforms, DepartmentOverview, PTSumState);
                     OverviewTable.push([SOWid, SOWSubject, ReqMilestone, SOWSIL, PTSumState.PT1State , PTSumState.PT2State, PTSumState.PVSState,SOWAffectedTestPlatforms, SOWPriority]);
                     //console.log('SOW ID:', SOWid, '| PT State:',PTSumState );
                     //console.log('-------------------------------------------------------------------');
@@ -913,51 +934,117 @@ function main(){
     // ---------------------------------------------------------------------//
     //  Department Overview
     // ---------------------------------------------------------------------//
-    google.charts.setOnLoadCallback(drawDepartmentChart);
-    function drawDepartmentChart(){
+//    google.charts.setOnLoadCallback(drawDepartmentChart);
+//    function drawDepartmentChart(){
+//
+//        var dataTable = new google.visualization.DataTable()
+//        dataTable.addColumn('string', 'Dep');
+//        dataTable.addColumn('number', 'count');
+//        var TableArray = [];
+//
+//        for (var key in DepartmentOverview) {
+//            TableArray.push([key, DepartmentOverview[key]]);
+//        }
+//        dataTable.addRows(TableArray);
+//
+//        var view = new google.visualization.DataView(dataTable);
+//        // ---------------------------------------------------------------------//
+//        var cols = [0];
+//        cols.push({
+//            sourceColumn: 1,
+//            type: "number",
+//        });
+//        cols.push({
+//            calc: "stringify",
+//            sourceColumn: 1,
+//            type: "string",
+//            role: "annotation"
+//        });
+//        var view = new google.visualization.DataView(dataTable);
+//        view.setColumns(cols);
+//        //---------------------------------------------------------------------//
+//
+//        var options = {
+//            title: 'Department Overview',
+//            width: 400,
+//            height: 400,
+//            legend: "none",
+//            chartArea: {left:50, bottom:30, width:"70%", height:"70%"},
+//            bar: { groupWidth: '50%' },
+//        };
+//
+//        var chart = new google.visualization.ColumnChart(document.getElementById('DepartmentOverview'));
+//        chart.draw(view, options);
+//    }
+
+
+    // ---------------------------------------------------------------------//
+    //  Department Status Overview
+    // ---------------------------------------------------------------------//
+    google.charts.setOnLoadCallback(drawDepartmentStateChart);
+    function drawDepartmentStateChart(){
+//--------------------------------------------------------------------------//
         var dataTable = new google.visualization.DataTable()
-        dataTable.addColumn('string', 'Dep');
-        dataTable.addColumn('number', 'count');
-        var TableArray = [];
 
-        for (var key in DepartmentOverview) {
-            TableArray.push([key, DepartmentOverview[key]]);
+        //dataTable.addColumn('string', 'Dep');
+        //dataTable.addColumn('number', 'TCmissing');
+        //dataTable.addColumn('number', 'NegTested');
+        //dataTable.addColumn('number', 'UnTested');
+        //dataTable.addColumn('number', 'RestTested');
+        //dataTable.addColumn('number', 'PartTestWithRest');
+        //dataTable.addColumn('number', 'PartTested');
+        //dataTable.addColumn('number', 'PosTested');
+        var DepStateArray = [];
+        //dataTable.addRow(['Dep','TCmissing','NegTested','UnTested','RestTested','PartTestWithRest','PartTested','PosTested']);
+        DepStateArray.push(['Dep','TCmissing','NegTested','UnTested','RestTested','PartTestWithRest','PartTested','PosTested']);
+        for (var key in DepartmentStateOverviewPVS) {
+            DepStateArray.push([key,
+            DepartmentStateOverviewPVS[key].TCmissing,
+            DepartmentStateOverviewPVS[key].NegTested,
+            DepartmentStateOverviewPVS[key].UnTested,
+            DepartmentStateOverviewPVS[key].RestTested,
+            DepartmentStateOverviewPVS[key].PartTestWithRest,
+            DepartmentStateOverviewPVS[key].PartTested,
+            DepartmentStateOverviewPVS[key].PosTested]);
         }
-        dataTable.addRows(TableArray);
 
-        var view = new google.visualization.DataView(dataTable);
+        //dataTable.addRows(DepStateArray);
+        var dataTable = google.visualization.arrayToDataTable(DepStateArray);
+
         // ---------------------------------------------------------------------//
         var cols = [0];
-        cols.push({
-            sourceColumn: 1,
-            type: "number",
-        });
-        cols.push({
-            calc: "stringify",
-            sourceColumn: 1,
-            type: "string",
-            role: "annotation"
-        });
+        for (var i = 1; i < DepStateArray[0].length; i++) {
+            cols.push({
+                sourceColumn: i,
+                type: "number",
+                label: DepStateArray[0][i]
+            });
+            cols.push({
+                calc: "stringify",
+                sourceColumn: i,
+                type: "string",
+                role: "annotation"
+            });
+        }
         var view = new google.visualization.DataView(dataTable);
         view.setColumns(cols);
         //---------------------------------------------------------------------//
 
         var options = {
-            title: 'Department Overview',
-            width: 400,
+            title: 'Department State Overview for SF4',
+            width: 1000,
             height: 400,
             legend: "none",
-            chartArea: {left:50, bottom:30, width:"70%", height:"70%"},
-            bar: { groupWidth: '50%' },
+            chartArea: {left:50, bottom:30, width:"100%", height:"70%"},
+            bar: { groupWidth: '70%' },
+            //////////redbrown , red     , rose    ,orange   ,kaki     ,lgreen    ,dgreen
+            colors : ['#8B0707','#DC3912','#DD4477','#F07336','#FF9900','#AB9808','#109618']
+            //isStacked: true
         };
 
-
-
-
-        var chart = new google.visualization.ColumnChart(document.getElementById('DepartmentOverview'));
+        var chart = new google.visualization.ColumnChart(document.getElementById('DepartmentStateOverview'));
         chart.draw(view, options);
     }
-
     // ---------------------------------------------------------------------//
     //  Test Coverage over Milestones Chart
     // ---------------------------------------------------------------------//
