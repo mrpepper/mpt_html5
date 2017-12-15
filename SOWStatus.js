@@ -11,6 +11,7 @@ function main(){
     var MS2ReqStateSum = {all:0, ReqImplemented:0, ReqSpecified:0, others:0};
     var MS3ReqStateSum = {all:0, ReqImplemented:0, ReqSpecified:0, others:0};
     var MS4ReqStateSum = {all:0, ReqImplemented:0, ReqSpecified:0, others:0};
+    var noMSReqStateSum = {all:0, ReqImplemented:0, ReqSpecified:0, others:0};
     var notSW = 0;
     var hasLink = 0;
     var hasMilestone = 0;
@@ -47,6 +48,7 @@ function main(){
                 MS4ReqStateSum  = addtoMilestoneCount(MS4ReqStateSum, ReqState);
             break;
             default:
+                noMSReqStateSum  = addtoMilestoneCount(noMSReqStateSum, ReqState);
             break;
         }
     }
@@ -62,7 +64,7 @@ function main(){
         if(SWavailable == true){
             if (detailedWith !== ''){
                 hasLink++;
-                console.log(AffectedSystemComp, hasLink)
+                //console.log(AffectedSystemComp, hasLink)
             }
         } else {
             notSW++;
@@ -114,13 +116,13 @@ function main(){
 // ---------------------------------------------------------------------//
 // general Calculations
 // ---------------------------------------------------------------------//
-    var ReqSpecImpl = MS2ReqStateSum.ReqSpecified + MS2ReqStateSum.ReqImplemented + MS3ReqStateSum.ReqSpecified + MS3ReqStateSum.ReqImplemented + MS4ReqStateSum.ReqSpecified + MS4ReqStateSum.ReqImplemented;
-    console.log(hasLink);
-    console.log(hasMilestone);
-    console.log(SumReqCount);
-    console.log(MS2ReqStateSum);
-    console.log(MS3ReqStateSum);
-    console.log(MS4ReqStateSum);
+    var ReqSpecImpl = noMSReqStateSum.ReqSpecified + noMSReqStateSum.ReqImplemented + MS2ReqStateSum.ReqSpecified + MS2ReqStateSum.ReqImplemented + MS3ReqStateSum.ReqSpecified + MS3ReqStateSum.ReqImplemented + MS4ReqStateSum.ReqSpecified + MS4ReqStateSum.ReqImplemented;
+//    console.log(hasLink);
+//    console.log(hasMilestone);
+//    console.log(SumReqCount);
+//    console.log(MS2ReqStateSum);
+//    console.log(MS3ReqStateSum);
+//    console.log(MS4ReqStateSum);
 
 
 // ---------------------------------------------------------------------//
@@ -137,6 +139,7 @@ function main(){
 
         var data = google.visualization.arrayToDataTable([
             ['Release', 'other States', 'Requirement Specified', 'Requirement Implemented'],
+            ['no MS',noMSReqStateSum.others, noMSReqStateSum.ReqSpecified,noMSReqStateSum.ReqImplemented],
             ['MS2',MS2ReqStateSum.others, MS2ReqStateSum.ReqSpecified,MS2ReqStateSum.ReqImplemented],
             ['MS3',MS3ReqStateSum.others, MS3ReqStateSum.ReqSpecified,MS3ReqStateSum.ReqImplemented],
             ['MS4',MS4ReqStateSum.others, MS4ReqStateSum.ReqSpecified,MS4ReqStateSum.ReqImplemented]
