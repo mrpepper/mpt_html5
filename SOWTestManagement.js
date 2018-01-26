@@ -482,7 +482,7 @@ function main(){
     // ---------------------------------------------------------------------//
     function handleTCPTStates(ReqMS, SOWTPFstring, TCdata){
         //selectedTestPlatforms
-        var sumState = 'notRelevant';
+        var sumState = 'TCmissing';
         var finish = 'false';
         var PTsumStates = {PT1State:'',PT2State:'',PVSState:''};
         var PTGens = ['PT1State', 'PT2State', 'PVSState'];
@@ -548,7 +548,7 @@ function main(){
 
         //iterate over all TCs from one SOW, first over one PT generation for every TC then go to next PT generation
         for (var j = PTGenCount; j < PTGens.length; j++) { //Generations
-            sumState = 'notRelevant';
+            sumState = 'TCmissing';
 
             for (var i = 0; i < TCdata.length; i++) { //PT Gen Testresults PT1/PT2/PVS
                 var PTState = TCdata[i][PTGens[j]];
@@ -563,7 +563,7 @@ function main(){
                 }
 
                 switch (PTState)
-                { //PosTested, PartTested, PartTestWithRest, UnTested, NegTested, TCmissing, notRelevant
+                { //PosTested, PartTested, PartTestWithRest, UnTested, NegTested, TCmissing, TCmissing
                     case 'TC to Verify':
                         switch (sumState)
                         {
@@ -580,7 +580,7 @@ function main(){
                                 sumState = 'PartTestWithRest';
                             break;
                             case 'UnTested':
-                            case 'notRelevant':
+                            case 'TCmissing':
                             default:
                                 sumState = 'UnTested';
                             break;
@@ -605,7 +605,7 @@ function main(){
                             case 'NegTested':
                                 sumState = 'NegTested'; //not relevant here could be removed?
                             break;
-                            case 'notRelevant':
+                            case 'TCmissing':
                                 sumState = 'RestTested';
                             break;
                         }
@@ -631,7 +631,7 @@ function main(){
                             case 'UnTested':
                                 sumState = 'PartTested';
                             break;
-                            case 'notRelevant': //in case only one TC attached and positive
+                            case 'TCmissing': //in case only one TC attached and positive
                                 sumState = 'PosTested';
                             break;
                             default:
@@ -649,8 +649,8 @@ function main(){
                         // if Test Case PT State for this Release is empty
                         // it is not relevant for this Release
                         // also no other States are considered
-                        if (sumState == '' || sumState == 'notRelevant' ){
-                            sumState = 'notRelevant';
+                        if (sumState == '' || sumState == 'TCmissing' ){
+                            sumState = 'TCmissing';
                         } else {
                             sumState = sumState;
                         }
