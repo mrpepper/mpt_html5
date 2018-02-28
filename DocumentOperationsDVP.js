@@ -1,5 +1,5 @@
-$(document).ready(function() { 
-	
+$(document).ready(function() {
+
 	$('div#nav').hide();
 	$('#toggleNav').click(function(){
 		$('div#nav').slideToggle("slow");
@@ -11,11 +11,11 @@ $(document).ready(function() {
 	});
 
 
-	
-	/* 
+
+	/*
 	Document operations focus on restructuring the document structure which will be lost in a report
 	Essential input fields: item ID and relationsship field Contains
-	
+
 	Preconditions on the report structure:
 		- existance of a div with id="Data"
 		- existance of one single row in the table body of class="document"
@@ -28,66 +28,66 @@ $(document).ready(function() {
 	var indexColContains=$('th#colContains').index();
 	var indexColCategory=$('th#colCategory').index();
 	var indexColSummary=$('th#colSummary').index();
-	
+
 	var arrDocItemOrder = [];
 	var arrDocItemLevel = [];
 	var cntDocItems = $('div#Data table#entries tbody tr.item').length;
 
-	
+
 	// main function calls:
-	
+
 	getDocStructure(getItemContainsArr($('div#Data table#entries tbody tr.document td').eq(indexColContains).text()),1,getItemLevelsArr($('div#Data table#entries tbody tr.document td').eq(indexColContains).text(),0));
 	setDocStructure();
 
 	generateReport();
-	
-	/* 
+
+	/*
 	helper function to transfor a comma separated string of relationship IDs into an array
-	
-	in: "000000ay, ..., 999999ay" 
+
+	in: "000000ay, ..., 999999ay"
 	returns: [000000,...,999999]
 	*/
 	function getItemContainsArr(IDString) {
-		
+
 		var retval = [];
-		
+
 		if (IDString.length > 0) {
 			retval = IDString.split(', ');
 			for (var i=0; i < retval.length; i++) {
 				retval[i] = retval[i].replace('ay','');
 			}
 		}
-		
+
 		return retval;
 	}
 
 	function getItemLevelsArr(IDString, IDLevel) {
-		
+
 		var retval = [];
 		var containsLevel = IDLevel+1;
-		
+
 		if (IDString.length > 0) {
 			retval = IDString.split(', ');
 			for (var i=0; i < retval.length; i++) {
 				retval[i] = containsLevel;
 			}
 		}
-		
+
 		return retval;
 	}
-	
-	
-	/* 
+
+
+	/*
 	(recursive) function to generate the document structure
-	
-	initial input: array with with the item ID contained by the document item 
-	recursive input: array consisting of the contained IDs of the currently processed item merged with the remaining array of ID from the previous function call	
+
+	initial input: array with with the item ID contained by the document item
+	recursive input: array consisting of the contained IDs of the currently processed item merged with the remaining array of ID from the previous function call
 	*/
 	function getDocStructure(IDArray, IDOrder, LevelArray) {
 		if (IDArray.length > 0) {
 			// (1) get currID and remove it from IDArray
-			var currID = IDArray.reverse().pop(); 
-			var currLevel = LevelArray.reverse().pop(); 
+			var currID = IDArray.reverse().pop();
+			var currLevel = LevelArray.reverse().pop();
 			IDArray = IDArray.reverse();
 			LevelArray = LevelArray.reverse();
 
@@ -113,14 +113,14 @@ $(document).ready(function() {
 			}
 		}
 	}
-	
-	/* 
+
+	/*
 	funtion(s) to sort the data table by colum Order
 	*/
 	function setDocStructure(){
 		var table = $('div#Data table#entries');
 		var rows = table.find('tr:gt(0)').toArray().sort(comparer(indexColOrder));
-		
+
 		for (var i = 0; i < rows.length; i++){ table.append(rows[i]); }
 	}
 	function comparer(index) {
@@ -130,18 +130,18 @@ $(document).ready(function() {
 		}
 	}
 	function getCellValue(row, index){ return $(row).children('td').eq(index).html(); }
-	
-	
-	
-	
+
+
+
+
 	function generateReport() {
 		var htmlOutput = "";
-		
-		$('div#Data table#entries tbody tr.item').each(function(){		
+
+		$('div#Data table#entries tbody tr.item').each(function(){
 			switch($(this).find('td').eq(indexColCategory).text()) {
 				case 'Heading':
 					level = parseInt($(this).find('td').eq(indexColLevel).text())+2;
-				
+
 					htmlOutput += "<h"+level+">"+$(this).find('td').eq(indexColSummary).text()+"</h"+level+">";
 					break;
 				case 'Test':
@@ -177,7 +177,7 @@ $(document).ready(function() {
 					htmlOutput += "<td class='attrVal centered' id='"+highlightState($(this).find('td').eq(indexColSummary+7).text())+"'>"+$(this).find('td').eq(indexColSummary+7).text()+"</td>";	// State PVS
 					htmlOutput += "<td class='attrVal'>";
 					if ( $(this).find('td').eq(indexColSummary+7).text().length > 1 ) { htmlOutput += $(this).find('td').eq(indexColSummary+8).text() }	// Verification Report PVS
-					htmlOutput += "</td></tr>"; 
+					htmlOutput += "</td></tr>";
 
 					if ($(this).next().find('td').eq(indexColCategory).text() != 'Test') {
 						htmlOutput += "</tbody></table>";
@@ -189,13 +189,13 @@ $(document).ready(function() {
 					break;
 			}
 		});
-		
+
 		$('div#Report').html(htmlOutput);
 	}
-	
+
 	function highlightState(stateString) {
 		switch (stateString) {
-			case 'TC Completed with Restriction': 
+			case 'TC Completed with restriction':
 				return "TCrest";
 				break;
 			case 'TC Failed':
@@ -208,5 +208,5 @@ $(document).ready(function() {
 				break;
 		}
 	}
-	
+
 });
