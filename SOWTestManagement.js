@@ -95,11 +95,36 @@ function main(){
     var selectedTestPlatforms = $( "#selected_Test_Platforms" ).val();
     var selectedSILrelevant = $( "#selected_SIL_relevant" ).val();
     var selectedPriority = $( "#selected_Priority" ).val();
+    var selectedSFLevel = $( "#selected_SF_Level" ).val();
+
     var OverviewTable = [];
     var SOWSubject = '';
     var SOWSIL = '';
     var DepartmentOverview = {};
     var DepartmentStateOverviewPVS = {};
+    var DepartmentStateOverview = {};
+    var DepartmentStateOverviewPT1 = {};
+    var DepartmentStateOverviewPT2 = {};
+
+
+    // ---------------------------------------------------------------------//
+    // Extract Departments from Selected TPFs
+    // ---------------------------------------------------------------------//
+    var splitstring = [];
+    var DepStrings = [];
+    for (var i = 0; i < selectedTestPlatforms.length; i++) {
+        splitstring[i] = selectedTestPlatforms[i].split("-")[0].trim();
+        if(splitstring[i] !== ""){
+            //remove duplicates and write to new Array: uniqueNames
+            if($.inArray(splitstring[i], DepStrings) === -1) DepStrings.push(splitstring[i]);
+        }
+    }
+    // ---------------------------------------------------------------------//
+    // Initialise DepartmentStateOverview
+    // ---------------------------------------------------------------------//
+    DepStrings.forEach(function(data){
+        DepartmentStateOverview[data] = {TCmissing:0,UnTested:0,NegTested:0,RestTested:0,PartTested:0,PartTestWithRest:0,PosTested:0};
+    });
 
 
     // ---------------------------------------------------------------------//
@@ -341,8 +366,8 @@ function main(){
         if (init){
             DepartmentStateOverviewPVS[uniqueElement] = PTStatusMask;
         }
-        //DepartmentStateOverview[uniqueElement][PTStates.PT1State]++;
-        //DepartmentStateOverview[uniqueElement][PTStates.PT2State]++;
+        //DepartmentStateOverviewPT1[uniqueElement][PTStates.PT1State]++;
+        //DepartmentStateOverviewPT2[uniqueElement][PTStates.PT2State]++;
         DepartmentStateOverviewPVS[uniqueElement][PTStates.PVSState]++;
 
         return DepartmentStateOverviewPVS;
@@ -478,6 +503,302 @@ function main(){
         }
     }
     // ---------------------------------------------------------------------//
+    // ---------------------------------------------------------------------//
+    function getvalidReq(selectedSFLevel, Milestone){
+        var result = 'true'
+        switch(selectedSFLevel){
+            case "SF2":
+                switch (Milestone) {
+                    case 'MS2':
+                        result = true;
+                    break;
+                    case 'MS3':
+                        result = false;
+                    break;
+                    case 'MS4':
+                        result = false;
+                    break;
+                    default:
+                }
+            break;
+            case "SF3":
+                switch (Milestone) {
+                    case 'MS2':
+                        result = true;
+                    break;
+                    case 'MS3':
+                        result = true;
+                    break;
+                    case 'MS4':
+                        result = false;
+                    break;
+                    default:
+                }
+            break;
+            case "SF4":
+                switch (Milestone) {
+                    case 'MS2':
+                        result = true;
+                    break;x
+                    case 'MS3':
+                        result = true;
+                    break;
+                    case 'MS4':
+                        result = true;
+                    break;
+                    default:
+                }
+            break;
+            default:
+                switch (Milestone) {
+                    case 'MS2':
+                        result = true;
+                    break;
+                    case 'MS3':
+                        result = true;
+                    break;
+                    case 'MS4':
+                        result = true;
+                    break;
+                    default:
+                }
+            break;
+        }
+        return result;
+    }
+
+    // ---------------------------------------------------------------------//
+    // calculte Testing State for a Reqirement from linked Test Cases PT Test States for Departments
+    // ---------------------------------------------------------------------//
+    function handleTCPTStatesForDepartment(ReqMS, SOWTPFstring, TCdata){
+        //selectedTestPlatforms
+        var sumState = '';
+        var finish = 'false';
+        var PTsumStates = {PT1State:'',PT2State:'',PVSState:''};
+        var PTGens = ['PT1State', 'PT2State', 'PVSState'];
+        var slicedReqMS = ReqMS.substring(0,3);
+        var PTGenCount = 0;
+        var collectedTCTPFs = [];
+        // collectTestplatform from SOW
+        var SOWTPFs = stringtoArray(SOWTPFstring,",");
+
+        var splitstring = [];
+        var SOWDepStrings = [];
+        for (var i = 0; i < SOWTPFs.length; i++) {
+            splitstring[i] = SOWTPFs[i].split("-")[0].trim();
+            if(splitstring[i] !== ""){
+                //remove duplicates and write to new Array: uniqueNames
+                if($.inArray(splitstring[i], SOWDepStrings) === -1) SOWDepStrings.push(splitstring[i]);
+            }
+        }
+
+
+        //collect Testplatforms from Test Cases and add to array if New
+        for (var i = 0; i < TCdata.length; i++) {
+            collectedTCTPFs = addtoArray(collectedTCTPFs, TCdata[i].TestPF);
+        }
+        //reduce Array by items from TPF selection from the menu
+        var TCTPFredbySelection = reduceArray(collectedTCTPFs, selectedTestPlatforms,true);
+        var SOWTPFredbySelection = reduceArray(SOWTPFs,selectedTestPlatforms,true);
+        //how many Testplatforms from SOW are not covered by Testplatforms from Testcase
+        var TPFsleft = reduceArray(SOWTPFredbySelection,TCTPFredbySelection,false);
+
+
+        //check for TC with no PT States and substitute with TCState
+        for (var i = 0; i < TCdata.length; i++) {
+            var Gens = ['PT1State', 'PT2State', 'PVSState'];
+            var count = 0;
+            for (var j in Gens){
+                if(TCdata[i][Gens[j]] == '' || TCdata[i][Gens[j]] == null || TCdata[i][Gens[j]] == '\xa0'){ //\xa0 == &nbsp;
+                    count++;
+                }
+            }
+            if (count == 3){
+                for (var k in Gens){
+                    if(TCdata[i].TCState == 'TC New' || TCdata[i].TCState == 'TC Specified' || TCdata[i].TCState == 'TC In Work' || TCdata[i].TCState == 'TC Retest'){
+                        TCdata[i][Gens[k]] = 'TC to Verify';
+                    } else {
+                        TCdata[i][Gens[k]] = TCdata[i].TCState;
+                    }
+                }
+            }
+        }
+
+        var PTGen = "";
+        switch(selectedSFLevel){
+            case "SF2":
+                PTGen = "PT1State";
+            break;
+            case "SF3":
+                PTGen = "PT2State";
+            break;
+            case "SF4":
+                PTGen = "PVSState";
+            break;
+            default:
+                PTGen = "PT1State";
+            break;
+        }
+        var validSOWMS  = getvalidReq(selectedSFLevel, slicedReqMS);
+
+    if(validSOWMS){
+        for (var j = 0; j < DepStrings.length; j++)
+        {
+            sumState = "";
+            for (var i = 0; i < TCdata.length; i++)
+            {
+                //PT Gen Testresults PT1/PT2/PVS
+                var split = TCdata[i].TestPF.split("-");
+                var TCDep = split[0].trim();
+
+                if(TCDep == DepStrings[j])
+                {
+                    var PTState = TCdata[i][PTGen];
+                    // check if TC is not to verify in current Generation
+                    // and set to previous gen State if 'TC not to Verify'
+                    if(TCdata[i][PTGen] == 'TC not to Verify'){
+                        var a = PTGens.indexOf(PTGen);
+                        PTState = TCdata[i][PTGens[a-1]];
+                        if(a-1 !==0 && TCdata[i][PTGens[a-1]] == 'TC not to Verify'){
+                            PTState = TCdata[i][PTGens[a-2]];
+                        }
+                    }
+
+                    switch (PTState)
+                    { //PosTested, PartTested, PartTestWithRest, UnTested, NegTested, TCmissing, TCmissing
+                        case 'TC to Verify':
+                            switch (sumState)
+                            {
+                                case 'PosTested':
+                                        sumState = 'PartTested';
+                                    break;
+                                    case 'PartTested':
+                                        sumState = 'PartTested';
+                                    break;
+                                    case 'PartTestWithRest':
+                                        sumState = 'PartTestWithRest';
+                                    break;
+                                    case 'RestTested':
+                                        sumState = 'PartTestWithRest';
+                                    break;
+                                    case 'UnTested':
+                                    case 'TCmissing':
+                                    case '':
+                                    default:
+                                        sumState = 'UnTested';
+                                    break;
+                                    case 'NegTested':
+                                        sumState = 'NegTested'; //not relevant here could be removed?
+                                    break;
+                                }
+                                break;
+                                case 'TC Completed with restriction':
+                                switch (sumState)
+                                {
+                                    case 'PosTested':
+                                    case 'PartTested':
+                                    case 'PartTestWithRest':
+                                    case 'UnTested':
+                                    default:
+                                        sumState = 'PartTestWithRest';
+                                    break;
+                                    case 'RestTested':
+                                        sumState = 'RestTested';
+                                    break;
+                                    case 'NegTested':
+                                        sumState = 'NegTested'; //not relevant here could be removed?
+                                    break;
+                                    case 'TCmissing':
+                                        sumState = 'RestTested';
+                                    break;
+                                    case '':
+                                        sumState = 'RestTested';
+                                    break;
+                                }
+                                break;
+                                case 'TC Completed':
+                                switch (sumState)
+                                {
+                                    case 'PosTested':
+                                        sumState = 'PosTested';
+                                    break;
+                                    case 'PartTested':
+                                        sumState = 'PartTested';
+                                    break;
+                                    case 'PartTestWithRest':
+                                        sumState = 'PartTestWithRest';
+                                    break;
+                                    case 'RestTested':
+                                        sumState = 'RestTested';
+                                    break;
+                                    case 'NegTested':
+                                        sumState = 'NegTested';
+                                    break;
+                                    case 'UnTested':
+                                        sumState = 'PartTested';
+                                    break;
+                                    case 'TCmissing': //in case only one TC attached and positive
+                                        sumState = 'PosTested';
+                                    break;
+                                    case '':
+                                        sumState = 'PosTested';
+                                    break;
+                                    default:
+                                        sumState = 'NegTested';
+                                    break;
+                                }
+                                break;
+                                case 'TC Failed':
+                                    sumState = 'NegTested';
+                                    finish = 'true';
+                                break;
+                                case 'TC not to Verify':
+                                    //look in previous PT generations!!!
+                                default:
+                                    // if Test Case PT State for this Release is empty
+                                    // it is not relevant for this Release
+                                    // also no other States are considered
+                                    if (sumState == '' || sumState == 'TCmissing' ){
+                                        sumState = 'TCmissing';
+                                    } else {
+                                        sumState = sumState;
+                                    }
+                                break;
+                        }
+
+                        if (finish == 'true'){
+                            finish = 'false';
+                            break; //break inner loop
+                        }
+                } //ednif
+            }//inner loop
+            //wenn TPF von SOW nicht im TC dann TCmissing sonst keine TC missing
+            //count Department States
+
+            //if(sumState == ''){
+            //    //do not count anything
+            //} else
+            if(sumState == '' && TCdata.length == 0){
+                //when Requirement has not TC attached -> TC missing
+                for (var i = 0; i < SOWDepStrings.length; i++) {
+                    DepartmentStateOverview[SOWDepStrings[i]].TCmissing++;
+                }
+            } else if (sumState == 'TCmissing' && TPFsleft.length > 0){
+                DepartmentStateOverview[DepStrings[j]].TCmissing++;
+            } else {
+                DepartmentStateOverview[DepStrings[j]][sumState]++;
+            }
+
+        }//outer loop
+    }
+
+        return PTsumStates;
+    }
+
+
+
+
+    // ---------------------------------------------------------------------//
     // calculte Testing State for a Reqirement from linked Test Cases PT Test States
     // ---------------------------------------------------------------------//
     function handleTCPTStates(ReqMS, SOWTPFstring, TCdata){
@@ -499,9 +820,9 @@ function main(){
         }
         //reduce Array by items from TPF selection from the menu
         var TCTPFredbySelection = reduceArray(collectedTCTPFs, selectedTestPlatforms,true);
-        var SOWTPFredbySelction = reduceArray(SOWTPFs,selectedTestPlatforms,true);
+        var SOWTPFredbySelection = reduceArray(SOWTPFs,selectedTestPlatforms,true);
         //how many Testplatforms from SOW are not covered by Testplatforms from Testcase
-        var TPFsleft = reduceArray(SOWTPFredbySelction,TCTPFredbySelection,false);
+        var TPFsleft = reduceArray(SOWTPFredbySelection,TCTPFredbySelection,false);
 
 
         //choose PT Generations to analyse, concerning the Requirement Milestone
@@ -545,13 +866,14 @@ function main(){
             }
         }
 
-
         //iterate over all TCs from one SOW, first over one PT generation for every TC then go to next PT generation
         for (var j = PTGenCount; j < PTGens.length; j++) { //Generations
             sumState = 'TCmissing';
 
             for (var i = 0; i < TCdata.length; i++) { //PT Gen Testresults PT1/PT2/PVS
                 var PTState = TCdata[i][PTGens[j]];
+                var split = TCdata[i].TestPF.split("-");
+                var trimmedString = split[0].trim();
 
                 // check if TC is not to verify in current Generation
                 // and set to previous gen State if 'TC not to Verify'
@@ -658,6 +980,12 @@ function main(){
                     }
                 PTsumStates[PTGens[j]] = sumState;
 
+                //if(trimmedString in DepartmentStateOverviewPT1){
+                //    handleDepartmentStates_new(false,trimmedString,sumState,PTGens[j]);
+                //} else {
+                //    handleDepartmentStates_new(true,trimmedString,sumState,PTGens[j]);
+                //}
+
                 if (finish == 'true'){
                     finish = 'false';
                     break; //break inner loop
@@ -740,8 +1068,8 @@ function main(){
                     CountPlanningState(ReqMilestone,'TCmissing');
                     CountPTPlanningState(ReqMilestone,'TCmissing');
                     var PTSumState = handleEmptyPTStates(ReqMilestone);
-                    //console.log('Sum State: TCmissing');
-                    //console.log('-------------------------------------------------------------------');
+
+                    handleTCPTStatesForDepartment(ReqMilestone, SOWAffectedTestPlatforms, allTCdata);
 
                     //generate DepartmentOverview
                     DepartmentOverview = CountDepStrings(SOWAffectedTestPlatforms, DepartmentOverview, PTSumState);
@@ -756,6 +1084,7 @@ function main(){
 
                     //calculate SOW Test Status from PT gen Test States
                     var PTSumState = handleTCPTStates(ReqMilestone, SOWAffectedTestPlatforms, allTCdata);
+                    var PTSumStateForDep = handleTCPTStatesForDepartment(ReqMilestone, SOWAffectedTestPlatforms, allTCdata);
 
                     //generate DepartmentOverview
                     DepartmentOverview = CountDepStrings(SOWAffectedTestPlatforms, DepartmentOverview, PTSumState);
@@ -778,7 +1107,10 @@ function main(){
                     SOWAffectedTestPlatforms = this.getElementsByClassName('Affected')[0].childNodes[0].nodeValue;
                     SOWSubject = this.getElementsByClassName('Subject')[0].childNodes[0].nodeValue;
                     SOWPriority = this.getElementsByClassName('Priority')[0].childNodes[0].nodeValue;
-
+                    if (SOWid == "2618837"){
+                        console.log (SOWid)
+                    }
+                    console.log (SOWid)
                     ReqMilestone = Milestone;
                     SOWReqCount++;
                     SOWSIL = SILLevelofReq;
@@ -827,7 +1159,6 @@ function main(){
     // ---------------------------------------------------------------------//
     var posSOWTestCoverage = MS2StatusMask.PosTested + MS2StatusMask.RestTested + MS3StatusMask.PosTested + MS3StatusMask.RestTested + MS4StatusMask.PosTested + MS4StatusMask.RestTested;
     createTable(OverviewTable);
-
 
     // ---------------------------------------------------------------------//
     // Print google Charts
@@ -997,15 +1328,15 @@ function main(){
         var DepStateArray = [];
         //dataTable.addRow(['Dep','TCmissing','NegTested','UnTested','RestTested','PartTestWithRest','PartTested','PosTested']);
         DepStateArray.push(['Dep','TCmissing','NegTested','UnTested','RestTested','PartTestWithRest','PartTested','PosTested']);
-        for (var key in DepartmentStateOverviewPVS) {
+        for (var key in DepartmentStateOverview) {
             DepStateArray.push([key,
-            DepartmentStateOverviewPVS[key].TCmissing,
-            DepartmentStateOverviewPVS[key].NegTested,
-            DepartmentStateOverviewPVS[key].UnTested,
-            DepartmentStateOverviewPVS[key].RestTested,
-            DepartmentStateOverviewPVS[key].PartTestWithRest,
-            DepartmentStateOverviewPVS[key].PartTested,
-            DepartmentStateOverviewPVS[key].PosTested]);
+            DepartmentStateOverview[key].TCmissing,
+            DepartmentStateOverview[key].NegTested,
+            DepartmentStateOverview[key].UnTested,
+            DepartmentStateOverview[key].PartTestWithRest,
+            DepartmentStateOverview[key].RestTested,
+            DepartmentStateOverview[key].PartTested,
+            DepartmentStateOverview[key].PosTested]);
         }
 
         //dataTable.addRows(DepStateArray);
@@ -1031,7 +1362,7 @@ function main(){
         //---------------------------------------------------------------------//
 
         var options = {
-            title: 'Department State Overview for SF4',
+            title: 'Department State Overview for selected SF Level',
             width: 1000,
             height: 400,
             legend: "none",
