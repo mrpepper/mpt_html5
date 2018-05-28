@@ -157,7 +157,7 @@ function main(){
         var tableBody = document.createElement('tbody');
         tableData.forEach(function(rowData) {
             var row = document.createElement('tr');
-            var IntegrityURL = "integrity://lanwinsvmks1.eu.adglob.net:8001/im/viewissue?selection=";
+            var IntegrityURL = "integrity://lanwinsvmks1.magna.global:8001/im/viewissue?selection=";
             var ReqURL = IntegrityURL.concat(rowData[0]);
 
             rowData.forEach(function(cellData,index) {
@@ -582,17 +582,6 @@ function main(){
         // collectTestplatform from SOW
         var SOWTPFs = stringtoArray(SOWTPFstring,",");
 
-        var splitstring = [];
-        var SOWDepStrings = [];
-        for (var i = 0; i < SOWTPFs.length; i++) {
-            splitstring[i] = SOWTPFs[i].split("-")[0].trim();
-            if(splitstring[i] !== ""){
-                //remove duplicates and write to new Array: uniqueNames
-                if($.inArray(splitstring[i], SOWDepStrings) === -1) SOWDepStrings.push(splitstring[i]);
-            }
-        }
-
-
         //collect Testplatforms from Test Cases and add to array if New
         for (var i = 0; i < TCdata.length; i++) {
             collectedTCTPFs = addtoArray(collectedTCTPFs, TCdata[i].TestPF);
@@ -600,6 +589,17 @@ function main(){
         //reduce Array by items from TPF selection from the menu
         var TCTPFredbySelection = reduceArray(collectedTCTPFs, selectedTestPlatforms,true);
         var SOWTPFredbySelection = reduceArray(SOWTPFs,selectedTestPlatforms,true);
+
+        var splitstring = [];
+        var SOWDepStrings = [];
+        for (var i = 0; i < SOWTPFredbySelection.length; i++) {
+            splitstring[i] = SOWTPFredbySelection[i].split("-")[0].trim();
+            if(splitstring[i] !== ""){
+                //remove duplicates and write to new Array: uniqueNames
+                if($.inArray(splitstring[i], SOWDepStrings) === -1) SOWDepStrings.push(splitstring[i]);
+            }
+        }
+
         //how many Testplatforms from SOW are not covered by Testplatforms from Testcase
         var TPFsleft = reduceArray(SOWTPFredbySelection,TCTPFredbySelection,false);
 
@@ -1107,7 +1107,7 @@ function main(){
                     SOWAffectedTestPlatforms = this.getElementsByClassName('Affected')[0].childNodes[0].nodeValue;
                     SOWSubject = this.getElementsByClassName('Subject')[0].childNodes[0].nodeValue;
                     SOWPriority = this.getElementsByClassName('Priority')[0].childNodes[0].nodeValue;
-                    if (SOWid == "2618837"){
+                    if (SOWid == "2551152"){
                         console.log (SOWid)
                     }
                     console.log (SOWid)
