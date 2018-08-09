@@ -157,7 +157,7 @@ function main(){
         var tableBody = document.createElement('tbody');
         tableData.forEach(function(rowData) {
             var row = document.createElement('tr');
-            var IntegrityURL = "integrity://lanwinsvmks1.magna.global:8001/im/viewissue?selection=";
+            var IntegrityURL = "integrity://lanwinsvmks1.eu.adglob.net:8001/im/viewissue?selection=";
             var ReqURL = IntegrityURL.concat(rowData[0]);
 
             rowData.forEach(function(cellData,index) {
