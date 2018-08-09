@@ -582,6 +582,18 @@ function main(){
         // collectTestplatform from SOW
         var SOWTPFs = stringtoArray(SOWTPFstring,",");
 
+        var splitstring = [];
+        var SOWDepStrings = [];
+        for (var i = 0; i < SOWTPFs.length; i++) {
+            splitstring[i] = SOWTPFs[i].split("-")[0].trim();
+            if(splitstring[i] !== ""){
+                //remove duplicates and write to new Array: uniqueNames
+                if($.inArray(splitstring[i], SOWDepStrings) === -1) SOWDepStrings.push(splitstring[i]);
+            }
+        }
+        //SOW TPFs reduced by selection
+        var SOWDepStringsReducedBySelection = reduceArray(SOWDepStrings,DepStrings,true);
+
         //collect Testplatforms from Test Cases and add to array if New
         for (var i = 0; i < TCdata.length; i++) {
             collectedTCTPFs = addtoArray(collectedTCTPFs, TCdata[i].TestPF);
@@ -589,17 +601,6 @@ function main(){
         //reduce Array by items from TPF selection from the menu
         var TCTPFredbySelection = reduceArray(collectedTCTPFs, selectedTestPlatforms,true);
         var SOWTPFredbySelection = reduceArray(SOWTPFs,selectedTestPlatforms,true);
-
-        var splitstring = [];
-        var SOWDepStrings = [];
-        for (var i = 0; i < SOWTPFredbySelection.length; i++) {
-            splitstring[i] = SOWTPFredbySelection[i].split("-")[0].trim();
-            if(splitstring[i] !== ""){
-                //remove duplicates and write to new Array: uniqueNames
-                if($.inArray(splitstring[i], SOWDepStrings) === -1) SOWDepStrings.push(splitstring[i]);
-            }
-        }
-
         //how many Testplatforms from SOW are not covered by Testplatforms from Testcase
         var TPFsleft = reduceArray(SOWTPFredbySelection,TCTPFredbySelection,false);
 
@@ -642,7 +643,7 @@ function main(){
         var validSOWMS  = getvalidReq(selectedSFLevel, slicedReqMS);
 
     if(validSOWMS){
-        for (var j = 0; j < DepStrings.length; j++)
+        for (var j = 0; j < SOWDepStringsReducedBySelection.length; j++)
         {
             sumState = "";
             for (var i = 0; i < TCdata.length; i++)
@@ -651,7 +652,7 @@ function main(){
                 var split = TCdata[i].TestPF.split("-");
                 var TCDep = split[0].trim();
 
-                if(TCDep == DepStrings[j])
+                if(TCDep == SOWDepStringsReducedBySelection[j])
                 {
                     var PTState = TCdata[i][PTGen];
                     // check if TC is not to verify in current Generation
@@ -780,13 +781,14 @@ function main(){
             //} else
             if(sumState == '' && TCdata.length == 0){
                 //when Requirement has not TC attached -> TC missing
-                for (var i = 0; i < SOWDepStrings.length; i++) {
-                    DepartmentStateOverview[SOWDepStrings[i]].TCmissing++;
-                }
-            } else if (sumState == 'TCmissing' && TPFsleft.length > 0){
-                DepartmentStateOverview[DepStrings[j]].TCmissing++;
+                //for (var i = 0; i < DepStrings.length; i++) {
+                    //DepartmentStateOverview[DepStrings[i]].TCmissing++;
+                //}
+                DepartmentStateOverview[SOWDepStringsReducedBySelection[j]].TCmissing++;
+            } else if ((sumState == '' || sumState == 'TCmissing') && TPFsleft.length > 0){
+                DepartmentStateOverview[SOWDepStringsReducedBySelection[j]].TCmissing++;
             } else {
-                DepartmentStateOverview[DepStrings[j]][sumState]++;
+                DepartmentStateOverview[SOWDepStringsReducedBySelection[j]][sumState]++;
             }
 
         }//outer loop
@@ -1107,10 +1109,9 @@ function main(){
                     SOWAffectedTestPlatforms = this.getElementsByClassName('Affected')[0].childNodes[0].nodeValue;
                     SOWSubject = this.getElementsByClassName('Subject')[0].childNodes[0].nodeValue;
                     SOWPriority = this.getElementsByClassName('Priority')[0].childNodes[0].nodeValue;
-                    if (SOWid == "2551152"){
+                    if (SOWid == "2551727"){
                         console.log (SOWid)
                     }
-                    console.log (SOWid)
                     ReqMilestone = Milestone;
                     SOWReqCount++;
                     SOWSIL = SILLevelofReq;
