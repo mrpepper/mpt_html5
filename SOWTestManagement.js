@@ -603,7 +603,14 @@ function main(){
         var SOWTPFredbySelection = reduceArray(SOWTPFs,selectedTestPlatforms,true);
         //how many Testplatforms from SOW are not covered by Testplatforms from Testcase
         var TPFsleft = reduceArray(SOWTPFredbySelection,TCTPFredbySelection,false);
-
+        var DepOfTPFsleft =[];
+        for (var i = 0; i < TPFsleft.length; i++) {
+            splitstring[i] = TPFsleft[i].split("-")[0].trim();
+            if(splitstring[i] !== ""){
+                //remove duplicates and write to new Array: uniqueNames
+                if($.inArray(splitstring[i], DepOfTPFsleft) === -1) DepOfTPFsleft.push(splitstring[i]);
+            }
+        }
 
         //check for TC with no PT States and substitute with TCState
         for (var i = 0; i < TCdata.length; i++) {
@@ -776,16 +783,20 @@ function main(){
             //wenn TPF von SOW nicht im TC dann TCmissing sonst keine TC missing
             //count Department States
 
-            //if(sumState == ''){
-            //    //do not count anything
-            //} else
+            var openDepCount = 0;
+            if (DepOfTPFsleft.length > 0)
+            {
+                if(DepOfTPFsleft.indexOf(SOWDepStringsReducedBySelection[j]) > -1){
+                    openDepCount++;
+                }
+            }
+
             if(sumState == '' && TCdata.length == 0){
                 //when Requirement has not TC attached -> TC missing
-                //for (var i = 0; i < DepStrings.length; i++) {
-                    //DepartmentStateOverview[DepStrings[i]].TCmissing++;
-                //}
                 DepartmentStateOverview[SOWDepStringsReducedBySelection[j]].TCmissing++;
-            } else if ((sumState == '' || sumState == 'TCmissing') && TPFsleft.length > 0){
+            //} else if (DepOfTPFsleft.length > 0){
+            //} else if ((sumState == '' || sumState == 'TCmissing') && DepOfTPFsleft.length > 0){
+            } else if (openDepCount > 0){
                 DepartmentStateOverview[SOWDepStringsReducedBySelection[j]].TCmissing++;
             } else {
                 DepartmentStateOverview[SOWDepStringsReducedBySelection[j]][sumState]++;
@@ -1109,9 +1120,9 @@ function main(){
                     SOWAffectedTestPlatforms = this.getElementsByClassName('Affected')[0].childNodes[0].nodeValue;
                     SOWSubject = this.getElementsByClassName('Subject')[0].childNodes[0].nodeValue;
                     SOWPriority = this.getElementsByClassName('Priority')[0].childNodes[0].nodeValue;
-                    if (SOWid == "2551727"){
-                        console.log (SOWid)
-                    }
+                    //if (SOWid == "2550989"){
+                    //    console.log (SOWid)
+                    //}
                     ReqMilestone = Milestone;
                     SOWReqCount++;
                     SOWSIL = SILLevelofReq;
