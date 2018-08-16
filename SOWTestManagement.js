@@ -1372,9 +1372,9 @@ function main(){
         var view = new google.visualization.DataView(dataTable);
         view.setColumns(cols);
         //---------------------------------------------------------------------//
-
+        var text = 'Department State Overview for ' + selectedSFLevel;
         var options = {
-            title: 'Department State Overview for selected SF Level',
+            title: text,
             width: 1000,
             height: 400,
             legend: "none",
